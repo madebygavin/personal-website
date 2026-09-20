@@ -35,7 +35,7 @@ don't contact the engineer directly.
 
 Once all three are up, the PM runs `ListAgents`, updates the "Current mapping" table in `PROGRESS.md` §0 with the new session names (they'll be different every time), and picks up from "Next up".
 
-**If this is a fresh machine** (not just a reboot): `git clone`/`pull` the repo and run `npm install` before any of this — `node_modules` never transfers with the code itself.
+**If this is a fresh machine** (not just a reboot): `git clone https://github.com/madebygavin/personal-website.git` (private repo — you'll need to be authenticated as Gavin or have been granted access) and run `npm install` before any of this — `node_modules` never transfers with the code itself.
 
 ---
 

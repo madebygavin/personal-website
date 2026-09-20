@@ -7,6 +7,8 @@ Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not*
 
 > ⚠️ **Multiple sessions may be working on this repo at once.** Before editing anything, run `ListAgents` (if you're Claude Code) to check for a live peer session, and check `git status`/`git log` for uncommitted or unfamiliar changes on disk. If you find changes you didn't make, don't revert them blindly — they may be a peer's in-progress work. Message the peer to coordinate before touching the same files. See section 2 for who's doing what right now.
 
+> 📍 **Remote:** `https://github.com/madebygavin/personal-website` (private, added 2026-09-20). Nothing was pushed here before this repo existed locally-only — if you're on a fresh machine, `git clone` this instead of asking Gavin to transfer files another way. **Remember to `git push` after committing** — a PM session that only commits locally leaves other machines' clones stale. See `CLAUDE.md`'s restart guide for the full multi-session bootstrap.
+
 ---
 
 ## 0. Team & operating model (as of 2026-09-20)
@@ -121,6 +123,13 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### Git remote added, repo pushed (2026-09-20, ~13:40)
+Gavin asked how to rebuild the PM/engineer/reviewer session split after a reboot or on a different PC. Answer: the files (this repo) persist via git; the live sessions and their roles don't, and have to be re-bootstrapped every time. Two things done about it:
+1. `CLAUDE.md` got a "Restarting the multi-session team" section with copy-paste bootstrap prompts for each of the three roles, plus the reconnect steps (`ListAgents`, update the mapping table).
+2. The repo had no git remote at all until now — meaning there was previously no way to get this code onto a different machine except a manual file copy. Created a private GitHub repo (`gh repo create`, authenticated as `madebygavin`) and pushed all history. Remote: `https://github.com/madebygavin/personal-website`.
+
+Committed as `c535e36` (CLAUDE.md guide + the pending M4-assignment PROGRESS.md edit). **Process note for future sessions: remember to `git push`, not just `git commit`** — commits alone don't help a different machine, and this session almost left the remote-setup docs sitting local-only.
 
 ### M3 closed out — reviewer recheck clean (2026-09-20, ~13:25)
 Reviewer (`personal-website-f5`) rechecked all 3 fixes plus the two incidental files, independently re-ran lint/test/build (matched: 14/14 tests, 148.12 KB gzip JS), and found nothing new. Went beyond the ask: traced the Escape-refocus path to confirm it doesn't double-fire a redundant dismiss through the new `focusout` handler (a real edge case neither the PM nor the recheck request explicitly named) and confirmed the focus trap's container is a DOM sibling of the backdrop, not a wrapper around it, so the backdrop was never reachable via Tab. **M3 is now done**: implemented, sanity-checked, reviewed, fixed, and re-verified independently by both PM and reviewer. Uncommitted, pending Gavin's approval.
