@@ -1,0 +1,49 @@
+import { useState } from 'react'
+import { useLang } from '../../hooks/useLang'
+import { skillCategories, uiStrings } from '../../data/content'
+
+// Settings-style layout: sidebar categories, skill rows with level bars (section 7.8).
+export function SkillsApp() {
+  const { t } = useLang()
+  const [selectedId, setSelectedId] = useState(skillCategories[0].id)
+  const selected = skillCategories.find((category) => category.id === selectedId) ?? skillCategories[0]
+
+  return (
+    <div className="flex h-full text-sm">
+      <nav aria-label={t(uiStrings.skillCategoriesNavLabel)} className="w-40 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2">
+        <ul className="flex flex-col gap-1">
+          {skillCategories.map((category) => (
+            <li key={category.id}>
+              <button
+                type="button"
+                onClick={() => setSelectedId(category.id)}
+                aria-current={category.id === selectedId}
+                className={`w-full rounded-[8px] px-2 py-1.5 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
+                  category.id === selectedId ? 'bg-white/15 font-semibold' : 'hover:bg-white/10'
+                }`}
+              >
+                {t(category.label)}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className="flex-1 overflow-y-auto p-4">
+        <h3 className="mb-3 text-base font-semibold">{t(selected.label)}</h3>
+        <ul className="flex flex-col gap-3">
+          {selected.skills.map((skill) => (
+            <li key={skill.name}>
+              <div className="mb-1 flex items-center justify-between">
+                <span>{skill.name}</span>
+                <span className="text-xs opacity-60">{skill.level}%</span>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/10">
+                <div className="h-full rounded-full bg-[var(--color-accent)]" style={{ width: `${skill.level}%` }} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}

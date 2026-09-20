@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'motion/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGear, faCalendarDays, faFolderOpen, faEnvelope } from '@fortawesome/free-solid-svg-icons'
@@ -28,12 +28,23 @@ interface DockProps {
   onOpenApp: (id: AppId) => void
 }
 
+export interface DockHandle {
+  // Lets Desktop return focus to the dock icon that opened the window that
+  // just closed (section 7.7's focus-management requirement).
+  focusApp: (id: AppId) => void
+}
+
 // Floating glass dock with hover magnification (section 7.6).
-export function Dock({ activeApp, onOpenApp }: DockProps) {
+export const Dock = forwardRef<DockHandle, DockProps>(function Dock({ activeApp, onOpenApp }, ref) {
   const mouseX = useMotionValue(Infinity)
   const reducedMotion = useReducedMotion()
   const pointerFine = usePointerFine()
   const magnify = pointerFine && !reducedMotion
+  const buttonRefs = useRef<Partial<Record<AppId, HTMLButtonElement | null>>>({})
+
+  useImperativeHandle(ref, () => ({
+    focusApp: (id) => buttonRefs.current[id]?.focus(),
+  }))
 
   return (
     <div
@@ -49,11 +60,14 @@ export function Dock({ activeApp, onOpenApp }: DockProps) {
           magnify={magnify}
           isActive={activeApp === app.id}
           onOpen={() => onOpenApp(app.id)}
+          registerRef={(el) => {
+            buttonRefs.current[app.id] = el
+          }}
         />
       ))}
     </div>
   )
-}
+})
 
 function DockIcon({
   app,
@@ -61,12 +75,14 @@ function DockIcon({
   magnify,
   isActive,
   onOpen,
+  registerRef,
 }: {
   app: DockAppConfig
   mouseX: MotionValue<number>
   magnify: boolean
   isActive: boolean
   onOpen: () => void
+  registerRef: (el: HTMLButtonElement | null) => void
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const { t } = useLang()
@@ -90,14 +106,16 @@ function DockIcon({
         {label}
       </span>
       <motion.button
-        ref={ref}
+        ref={(el) => {
+          ref.current = el
+          registerRef(el)
+        }}
         type="button"
         aria-label={label}
         aria-pressed={isActive}
         onClick={() => {
+          // Clicking the already-open app does nothing (section 7.6).
           if (!isActive) onOpen()
-          // TODO(M4): open/replace the real window for this app — for now
-          // this only drives the menu bar label and the indicator dot below.
         }}
         style={{ width: size, height: size, backgroundImage: app.gradient }}
         className="flex items-center justify-center rounded-[var(--radius-dock-icon)] text-white shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
