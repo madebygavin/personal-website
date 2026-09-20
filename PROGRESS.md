@@ -28,6 +28,17 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 
 **If you're a new session picking this up:** run `ListAgents`. If a PM session is live, message it and wait for a task rather than starting independent work — it's tracking state you don't have. If no PM is live (Gavin only has one session open), there's no split in effect right now; work normally per section 9's rules and update this file yourself.
 
+### 0a. Usage-limit stop-and-log protocol (added 2026-09-20 ~19:20, per Gavin)
+
+Claude Code surfaces a warning when a session's usage/rate limit is getting close to its cap — there's no exact live percentage exposed to any session, so "95%" means: **the first time your own session sees that warning**, not a number you can poll for.
+
+When a session sees that warning:
+- **If it's the PM:** immediately write a full state snapshot into this file — every in-flight task, each peer's exact status, all pending decisions, precise next steps — then stop taking further action and tell Gavin directly. Don't wait for a "natural" stopping point; log mid-task if that's where the warning lands.
+- **If it's the engineer, reviewer, or tester:** immediately send the PM a full status report (what you were doing, progress so far, any partial output/files, exactly where you left off), then stop working and wait — don't keep going after sending the report. Per section 0's rule that only the PM edits this file, you report to the PM rather than editing it yourself; the PM folds your report into a PROGRESS.md snapshot and tells Gavin.
+- **Resuming:** a session picks back up only when Gavin says to continue (or, on a fresh session/after a reset, by reading the snapshot this protocol just produced — same as any other cold start per section 9).
+
+**Why this exists:** so a session running out of usage doesn't silently drop uncommitted context — the snapshot in this file is what lets any session (this one resumed, or a fresh one) pick up exactly where things stood.
+
 **Task protocol:**
 1. PM assigns a task to the engineer via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything needed from current `PROGRESS.md` state.
 2. Engineer works, verifies, and messages the PM back — no commit, no tracker edits.
