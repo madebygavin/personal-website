@@ -11,22 +11,26 @@ Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not*
 
 ## 0. Team & operating model (as of 2026-09-20)
 
-This repo is currently run with a **PM / engineer split** across two Claude Code sessions on Gavin's machine:
+This repo is currently run with a **PM / engineer / reviewer split** across three Claude Code sessions on Gavin's machine:
 
-- **PM session** — coordinates, assigns tasks, tracks this file, reviews the engineer's diffs, re-runs lint/test/build independently before trusting a "done" report, talks to Gavin, and is the only one who commits (and only when Gavin explicitly asks). **Does not write feature code.**
-- **Engineer session** — implements exactly the task the PM assigns, verifies its own work (`npm run lint && npm run test -- --run && npm run build`, plus a real check for anything visual/behavioral), and reports back to the PM with: what it did, files touched, verification results, any deviations or blockers. **Does not commit, and does not edit `PROGRESS.md` or `CLAUDE.md` directly** — those are the PM's to avoid two sessions racing on the same file. Report status via `SendMessage` to the PM instead.
+- **PM session** — coordinates, assigns tasks, tracks this file, gates when review happens, re-runs lint/test/build independently before trusting any "done" report, decides what happens with review findings, talks to Gavin, and is the only one who commits (and only when Gavin explicitly asks). **Does not write feature code and does not review code line-by-line** (that's the reviewer's job — PM's own checks are lint/test/build plus a sanity read of the diff, not a full review).
+- **Engineer session** — implements exactly the task the PM assigns, verifies its own work (`npm run lint && npm run test -- --run && npm run build`, plus a real check for anything visual/behavioral), and reports back to the PM with: what it did, files touched, verification results, any deviations or blockers. **Does not commit, and does not edit `PROGRESS.md` or `CLAUDE.md` directly** — report to the PM instead, to avoid sessions racing on the same file.
+- **Reviewer session** — a strict senior code reviewer. **Only reviews work the PM has explicitly flagged as ready** (i.e. the engineer has already reported the task done) — it does not review a task while the engineer is still mid-flight, and does not go looking for work on its own. Given a diff/commit range by the PM, it reviews for correctness, security, performance, maintainability, and adherence to `PROJECT_BRIEF.md`, then reports findings and suggestions back to the PM — severity-ranked, with file/line references where possible. **Does not edit code, does not commit, does not talk to the engineer directly** — everything routes through the PM, which decides what to act on.
 
 **Current mapping** (session names are assigned by the harness and will change if a session restarts — check `ListAgents` and update this line, don't assume the names below stay valid):
 - PM: `personal-website-b5`
 - Engineer: `personal-website-1d`
+- Reviewer: `personal-website-f5` (Gavin restarted the reviewer session at ~13:05 after `personal-website-ad` hit a cross-session messaging issue and couldn't reach the PM — see section 8. `personal-website-f5` has no memory of `-ad`'s in-progress M3 review; it was re-briefed and re-tasked from scratch.)
 
 **If you're a new session picking this up:** run `ListAgents`. If a PM session is live, message it and wait for a task rather than starting independent work — it's tracking state you don't have. If no PM is live (Gavin only has one session open), there's no split in effect right now; work normally per section 9's rules and update this file yourself.
 
 **Task protocol:**
-1. PM assigns a task via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything the engineer needs from current `PROGRESS.md` state.
-2. Engineer works, verifies, and messages back — no commit, no tracker edits.
-3. PM reviews (reads the diff, re-runs lint/test/build itself — doesn't just trust the report), updates `PROGRESS.md`, and either sends the engineer changes to make, or asks Gavin for commit approval.
-4. If the engineer session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or picking up the code itself.
+1. PM assigns a task to the engineer via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything needed from current `PROGRESS.md` state.
+2. Engineer works, verifies, and messages the PM back — no commit, no tracker edits.
+3. PM does a light sanity pass itself (re-runs lint/test/build, skims the diff for anything glaring) — not a full review.
+4. PM sends the reviewer the diff/commit range and asks for a strict review. Reviewer reports findings back to the PM only.
+5. PM triages the findings: sends any required fixes back to the engineer (loop back to step 2), or — if clean, or findings are minor/deferred — updates `PROGRESS.md` and asks Gavin for commit approval.
+6. If either session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or absorbing the work itself.
 
 ---
 
@@ -37,7 +41,7 @@ This repo is currently run with a **PM / engineer split** across two Claude Code
 | M0 | Scaffold | ✅ Done | ✅ | ✅ (0 tests, pass) | ✅ | n/a (blank page) |
 | M1 | Landing & login screen | 🟡 Code complete, visually spot-checked | ✅ | ✅ | ✅ | ✅ landing screen screenshot looks correct (see section 8) |
 | M2 | Boot & zoom transition | ✅ Done | ✅ | ✅ | ✅ | ✅ fixed + re-verified (see section 8, section 4a #1 resolved) |
-| M3 | Desktop shell | ⬜ Not started | — | — | — | — |
+| M3 | Desktop shell | ✅ Done, awaiting Gavin's commit approval | ✅ | ✅ | ✅ | ✅ 10+ screenshots in `.qa/`, spot-checked by PM; reviewer traced live keyboard behavior |
 | M4 | Window system & apps | ⬜ Not started | — | — | — | — |
 | M5 | Mobile | ⬜ Not started | — | — | — | — |
 | M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
@@ -49,11 +53,11 @@ This repo is currently run with a **PM / engineer split** across two Claude Code
 
 ## 2. Currently in progress
 
-Nothing actively in progress. The M2 zoom-transform bug is fixed and independently re-verified by both sessions active during this window (`personal-website-1d`, `personal-website-b5`); the fix is uncommitted pending Gavin's go-ahead (repo convention: commit only when explicitly asked).
+M3 is fully done — engineer implemented, PM sanity-checked, reviewer reviewed, fixes made, both PM and reviewer independently re-verified the fixes. All three sessions currently idle/standing by. **Waiting on Gavin's commit approval** (see section 3).
 
 ## 3. Next up
 
-**M3 — Desktop shell**: animated wallpaper, menu bar (logo menu + Control Center dropdown), About dialog, dock with hover magnification + open-app indicator. See PROJECT_BRIEF.md section 7.4–7.6 and 12.
+Asking Gavin now whether to commit M3. Once approved: PM commits, then assigns M4 (Window system & apps) to the engineer — the new `useFocusTrap` hook was built specifically for reuse there.
 
 ---
 
@@ -86,11 +90,22 @@ No other deviations from section 2 (Locked Decisions) or section 13 (Out of Scop
 
 ## 6. Veto-able assumptions applied so far
 
-From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at review. Only listing ones actually implemented so far; #1, #2, #7, #10, #12 aren't built yet (they belong to M3/M5).
+From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at review. #2 and #12 aren't built yet (M4/M5).
 
 | # | Gap | Applied as | Milestone |
 |---|---|---|---|
+| 1 | Active app name label | Shows localized "Desktop" when no window is open (window system isn't built until M4, so it always shows "Desktop" for now); dock click sets the label + indicator dot | M3 |
 | 3 | Keyboard/mouse decorative vs interactive | Fully decorative (`aria-hidden`); Enter key triggers login via a `window` keydown listener; Login button is a real `<button>`, also clickable via the avatar button | M1 |
+| 7 | Light mode look | Light gray glass panels, light animated gradient, dark text — implemented, per engineer's report, as CSS variables swapped on `data-theme`, same as dark | M3 |
+| 8 (impl. detail) | Brightness slider mechanism | Implemented as `backdrop-filter: brightness(N%)` on a full-screen overlay (not `filter` on the content tree) — engineer's literal reading of "CSS brightness filter on a full-screen overlay" | M3 |
+| 10 | Default language detection | Already built in M1 (`detectLanguage` on `navigator.language`); M3 just added the Control Center UI to override it | M1/M3 |
+
+**New engineer decisions not explicitly locked by the brief, need Gavin's eyes (not blocking):**
+- Dock icons: About me = `faUser`, Skills = `faGear`, Experience = `faCalendarDays`, Projects = `faFolderOpen`, Contact = `faEnvelope`, each on its own gradient tile color.
+- Wallpaper: pure CSS radial-gradient background-position drift (30s, alternating), no canvas; paused on both tab-hidden and reduced-motion.
+- "Control Center" localized to "Trung tâm điều khiển" in VI.
+- EN/VI segmented-control button labels left as literal strings (not run through `Localized<T>`), since they're language identifiers, not language-dependent prose.
+- `AboutDialog` has initial focus + Escape + focus-return, but no full focus trap. Brief section 10 doesn't explicitly demand a trap at this milestone — engineer flagged it as a candidate for now vs. M6; PM has not decided, awaiting reviewer input.
 
 ---
 
@@ -106,6 +121,56 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### M3 closed out — reviewer recheck clean (2026-09-20, ~13:25)
+Reviewer (`personal-website-f5`) rechecked all 3 fixes plus the two incidental files, independently re-ran lint/test/build (matched: 14/14 tests, 148.12 KB gzip JS), and found nothing new. Went beyond the ask: traced the Escape-refocus path to confirm it doesn't double-fire a redundant dismiss through the new `focusout` handler (a real edge case neither the PM nor the recheck request explicitly named) and confirmed the focus trap's container is a DOM sibling of the backdrop, not a wrapper around it, so the backdrop was never reachable via Tab. **M3 is now done**: implemented, sanity-checked, reviewed, fixed, and re-verified independently by both PM and reviewer. Uncommitted, pending Gavin's approval.
+
+### M3 review fixes made — PM-verified, sent for recheck (2026-09-20, ~13:20)
+Engineer (`personal-website-1d`) fixed all 3 items:
+1. **Tab-out closing** — rather than bolting Tab-close onto the existing Escape/refocus logic, split responsibilities: `useDismissablePopover` now does pure "light dismiss" (outside pointerdown + `focusout` via `relatedTarget` check), and never refocuses the trigger — refocusing on Tab would fight the browser's own forward focus movement and effectively trap the user. Escape handling stays in each caller (`LogoMenu`, `ControlCenter`) since only Escape should return focus to the trigger. PM read the new hook and both callers — confirmed this correctly separates the two concerns and doesn't reintroduce a trap-on-Tab bug.
+2. **AboutDialog focus trap** — built as a new reusable `hooks/useFocusTrap.ts` (standard first/last-focusable Tab/Shift+Tab wrap), explicitly for reuse in M4's Window component. PM read it — correct standard implementation, correctly scoped to just the dialog panel via `dialogRef` (not the backdrop).
+3. **ControlCenter `aria-haspopup`** — changed to `"dialog"`. PM confirmed.
+
+Engineer also did a live Tab-through verification (not just static/automated) and reported: menu closes and focus lands on the next control (not hijacked back) when tabbing forward past it; Escape still correctly refocuses the trigger; the dialog's 2-way Tab wrap confirmed both directions. Screenshots/scripts for this added to `.qa/` (`m3-review-fixes-check.cjs`), alongside the original M3 set — none deleted.
+
+**PM verification:** read all 5 touched files directly (not just the report), independently re-ran lint/test/build (clean: 14/14 tests, 148.12 KB gzip JS — build size still under the ~200KB bar). Sent the same 3 files to the reviewer for a targeted recheck (not a full re-review, since the rest of M3 didn't change) before asking Gavin for commit approval.
+
+### M3 review complete — findings triaged, fixes sent back to engineer (2026-09-20, ~13:10)
+Reviewer (`personal-website-f5`) did a static read of the full diff plus an independent lint/test/build run (matched PM's numbers exactly: 14/14 tests, 147.85 KB gzip JS). **No blocking findings.** PM independently re-verified both should-fix items by reading the actual source before acting on them (see below) — both confirmed real, not just accepted on the reviewer's word.
+
+**Should-fix (sent back to engineer, blocking the M3 commit):**
+1. `useDismissablePopover.ts:9-28` only closes on outside `pointerdown` or `Escape` — no `focusout` handling. Used by `LogoMenu` (`role="menu"`/`aria-haspopup="menu"`) and `ControlCenter`. A keyboard user tabbing through and past the menu leaves it visually open with `aria-expanded="true"` stuck true — a real deviation from the standard ARIA menu-button pattern (Tab should close it). PM confirmed by reading the hook: no `focusout`/blur listener exists at all.
+2. `AboutDialog.tsx:44` declares `aria-modal="true"` but has no focus trap — Tab can reach background controls (menu bar / dock) through the translucent backdrop. Reviewer's call, which PM agrees with: not a literal violation of section 10's explicit list (reachability/focus ring/Escape/dialog semantics are all met), but `aria-modal="true"` is an explicit promise to assistive tech that isn't being kept, so it's should-fix rather than a clean deferral. PM confirmed by reading the component: only two focusable elements inside (link, close button), nothing stops Tab from leaving the portal.
+
+**Also sent as a quick fix (trivial, bundled with the above rather than deferred):**
+3. `ControlCenter.tsx:32` — `aria-haspopup="true"` on a panel that's actually a settings fieldset (segmented controls + a slider), not a menu. Confirmed by reading the file. Reviewer suggested `aria-haspopup="dialog"` or dropping the attribute.
+
+**Deferred to M6 polish backlog (not blocking, logged so it isn't forgotten):**
+4. `Dock.tsx:75-80` — `getBoundingClientRect()` runs inside the hover-magnification `useTransform` callback, a forced layout read per icon per `mousemove`. Fine at 5 icons; reviewer suggested caching on resize instead. Not urgent — added to the M6 punch list.
+
+**Unprompted check the reviewer did on its own initiative (good sign of real scrutiny, not just answering the checklist):** traced whether `Desktop`'s `fixed` MenuBar/Dock have the same containing-block problem as the AboutDialog bug during the M2 zoom transition, since `<Desktop/>` briefly renders inside Hardware's transformed assembly at that point. Confirmed it's intentional and correct — that's exactly how the FLIP zoom scales the nested desktop together with the growing hardware screen, and `Desktop` becomes a top-level sibling again the instant the animation completes (`App.tsx:63-67`), so `fixed` descendants resolve against the real viewport again immediately after. No action needed, just confirms the M2 fix's design holds up under a second, independent trace.
+
+**Explicitly not verifiable from a static diff read (reviewer disclosed this rather than silently skipping it):** real screen-reader behavior (NVDA/VoiceOver), actual rendered contrast vs. hand-computed values, and touch-device dock behavior. None of these have had a hands-on pass from anyone yet — worth keeping in mind for M6's accessibility pass rather than assuming they're covered.
+
+PM sent all 3 fix items back to the engineer. Not yet committed — M3 stays at 🟡 pending the fix + re-verification.
+
+### Reviewer session restarted (2026-09-20, ~13:05)
+`personal-website-ad` (original reviewer) reported to Gavin that it couldn't reach the PM — no report ever arrived at `personal-website-b5` despite the PM's handoff message showing as delivered/queued on send. Root cause not confirmed (candidates: the receiving session's permission mode holding the message for approval, or something else entirely) — Gavin closed that session before it could be diagnosed further. Gavin opened a new session, `personal-website-f5`, as the replacement reviewer. It has no memory of `-ad`'s in-progress review, so it was re-briefed on the role/protocol and re-handed the M3 task from scratch (nothing was lost since `-ad` never actually reported any findings to begin with). **Lesson for next time:** if a peer reports a delivery problem, don't just retry blind — ask it what exactly happened (error vs. silent non-delivery) before concluding a restart is needed, since that diagnostic information is gone once the session closes.
+
+### M3 — Desktop shell — 🟡 Code complete, awaiting review (2026-09-20, ~12:40–12:56)
+**What shipped (engineer: `personal-website-1d`):**
+- New: `components/desktop/{Wallpaper,MenuBar,LogoMenu,ControlCenter,AboutDialog,Dock}.tsx`, `hooks/{useDismissablePopover,usePointerFine}.ts`.
+- Modified: `Desktop.tsx` (full rewrite, replaces the M2 stub), `config/brand.ts` (+`githubUrl`), `data/content.ts` (+`AppId` type, +`appNames`, +9 `uiStrings` entries), `styles/index.css` (+`.glass-panel` utility with a solid-color fallback for no-`backdrop-filter` browsers, +wallpaper drift keyframes, +theme vars).
+- Covers PROJECT_BRIEF.md 7.4–7.6: animated wallpaper (pauses on tab-hidden/reduced-motion), menu bar with logo menu + active-app label + Control Center + live clock, About dialog, dock with hover magnification + tooltips + open-app indicator.
+
+**Bug found and fixed during the engineer's own QA — flagged for reviewer attention:** `AboutDialog` is rendered from inside `LogoMenu` → `MenuBar`, and `MenuBar` carries `.glass-panel` (`backdrop-filter`). A `backdrop-filter` (or `filter`/`transform`) on an ancestor makes it the containing block for `position: fixed` descendants — same rule that trips people up with `transform`. So the dialog's `fixed inset-0` was resolving against the 28px menu bar box, not the viewport, squashing it into a sliver at the top. Fixed with `createPortal` to `document.body`. **Reviewer: please confirm M4's window layer (a `MenuBar` sibling, not a descendant) doesn't share this problem** — the engineer believes it's fine by construction but this is exactly the kind of non-obvious CSS gotcha worth a second pair of eyes on.
+
+**Verification:** `personal-website-1d` — tsc/eslint/vitest (14/14)/build (147.83 KB gzip JS) all clean; live Playwright repro against a dev server covering every 7.5/7.6 acceptance item (menu bar label swap, logo menu keyboard nav + focus return, About dialog, Restart via logo menu, Control Center theme/brightness/language, persistence-across-reload-resets-to-landing, dock magnification 44px→68px, dock indicator), zero console errors; 10 screenshots + the repro script kept in `.qa/` (not deleted — process fix from the M2 lesson). `personal-website-b5` (PM) independently re-ran lint/test/build (matched: 147.85 KB gzip JS), confirmed no `playwright-core` trace anywhere, and spot-checked 2 of the 10 screenshots directly (`m3-01-desktop-dark.png`, `m3-03-about-dialog.png` — both match spec, dialog correctly centered post-fix).
+
+**Not yet done:** full reviewer pass (in progress as of this entry — see section 2). No commit yet.
+
+### Team model expanded to PM/engineer/reviewer; M3 assigned (2026-09-20, ~12:40)
+Gavin added a third session, `personal-website-ad`, as a strict senior code reviewer. PM updated section 0 to a three-way protocol (reviewer only reviews once PM flags a task as engineer-complete; reports findings to PM only, no direct contact with the engineer, no edits/commits). PM assigned M3 (Desktop shell) to the engineer (`personal-website-1d`) — see the task message for full scope (wallpaper, menu bar, logo menu, About dialog, Control Center, dock; reuse existing preferences/session state and content.ts patterns). Briefed the reviewer on its role and told it to stand by. Commits `c1280fc` (M2 fix) and `1bf8ccf` (PM/engineer model) landed just before this. M3 work is in progress as of this entry.
 
 ### M2 bug found and fixed — sessions `personal-website-1d` + `personal-website-b5` (2026-09-20, ~12:16–12:33)
 Session `personal-website-1d` (live, parallel to this one) independently ran a headless Playwright repro (`playwright-core` from its `node_modules/.bin`) against a local dev server on port 5180: `1-landing.png` showed the M1 login screen rendering correctly (avatar, "Gavin" / "Software Developer", live clock "12:25 PM", "Sun, Sep 20 · New York" — timezone-to-city worked), but `2-after.png` (taken ~4.5s after clicking Login) showed the bug described in section 4a #1: desktop content stuck inside the small hardware screen, never zoomed to fill the viewport. It found the root cause, applied the fix, cleaned up all scratch artifacts, and reported back. `personal-website-b5` (this session) independently re-ran lint/test/build and reviewed the diff before accepting the fix — see section 4a #1 for full detail. Uncommitted as of this entry pending Gavin's go-ahead.

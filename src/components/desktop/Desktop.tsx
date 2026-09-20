@@ -1,31 +1,40 @@
-import { uiStrings } from '../../data/content'
-import { useLang } from '../../hooks/useLang'
-import { useSession } from '../../state/session'
+import { useState } from 'react'
+import { usePreferences } from '../../state/preferences'
+import { type AppId } from '../../data/content'
+import { Wallpaper } from './Wallpaper'
+import { MenuBar } from './MenuBar'
+import { Dock } from './Dock'
 
-// TODO(M3): replace with the real desktop shell (wallpaper, menu bar, dock).
-// The buttons here exist only to exercise the Log Out / Restart flows for M2.
+// Layer order (section 7.4): wallpaper, menu bar, window layer, dock,
+// brightness overlay. Menu bar and dock float above the window layer
+// (section 7.5: "sits above windows").
 export function Desktop() {
-  const { t } = useLang()
-  const session = useSession()
+  const { brightness } = usePreferences()
+  // TODO(M4): replace with real window state. The window system isn't built
+  // yet, so this only drives the menu bar's active-app label and the dock's
+  // indicator dot.
+  const [activeApp, setActiveApp] = useState<AppId | null>(null)
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_top,_#2c2f38_0%,_#0b0c10_75%)] text-white">
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={session.restart}
-          className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
-        >
-          {t(uiStrings.restart)}
-        </button>
-        <button
-          type="button"
-          onClick={session.logout}
-          className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
-        >
-          {t(uiStrings.logout)}
-        </button>
-      </div>
+    <div className="relative h-full w-full overflow-hidden">
+      <Wallpaper />
+      <MenuBar activeApp={activeApp} />
+
+      {/* TODO(M4): window layer — renders the single open app window. */}
+      <div className="absolute inset-0 z-10" />
+
+      <Dock activeApp={activeApp} onOpenApp={setActiveApp} />
+
+      {brightness < 100 && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[60]"
+          style={{
+            backdropFilter: `brightness(${brightness}%)`,
+            WebkitBackdropFilter: `brightness(${brightness}%)`,
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -12,6 +12,12 @@
   --glass-bg: rgb(30 32 38 / 60%);
   --glass-border: rgb(255 255 255 / 12%);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 40%);
+  --glass-highlight: rgb(255 255 255 / 8%);
+  --glass-bg-solid: #1c1e24;
+
+  --wallpaper-base: #101114;
+  --wallpaper-a: rgb(255 255 255 / 5%);
+  --wallpaper-b: rgb(255 255 255 / 9%);
 }
 
 [data-theme='light'] {
@@ -24,6 +30,12 @@
   --glass-bg: rgb(255 255 255 / 65%);
   --glass-border: rgb(0 0 0 / 8%);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 12%);
+  --glass-highlight: rgb(255 255 255 / 60%);
+  --glass-bg-solid: #eef0f2;
+
+  --wallpaper-base: #eceeef;
+  --wallpaper-a: rgb(0 0 0 / 4%);
+  --wallpaper-b: rgb(0 0 0 / 7%);
 }
 
 /* Radii (section 9): window 16-20px, dock 24px, dock icons 14-16px, controls 10px */
@@ -45,4 +57,31 @@ body {
   background: var(--color-bg-base);
   color: var(--color-text);
   font-family: 'Inter Variable', sans-serif;
+}
+
+/* Liquid Glass panel (section 9): menu bar, dock, dialogs, dropdowns. */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 0 var(--glass-highlight);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+}
+
+/* Solid-color fallback when backdrop-filter is unsupported (section 3, gap #21). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: var(--glass-bg-solid);
+  }
+}
+
+@keyframes wallpaper-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
 }
