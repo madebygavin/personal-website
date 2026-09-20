@@ -43,7 +43,7 @@ function Experience() {
 
   if (session.phase === 'landing') {
     return (
-      <Hardware screenRef={screenRef}>
+      <Hardware screenRef={screenRef} assemblyRef={outerRef}>
         <LoginScreen onLogin={session.login} />
       </Hardware>
     )
@@ -51,7 +51,7 @@ function Experience() {
 
   if (session.phase === 'booting' && !session.isRestarting) {
     return (
-      <Hardware screenRef={screenRef}>
+      <Hardware screenRef={screenRef} assemblyRef={outerRef}>
         <BootScreen onComplete={session.bootComplete} />
       </Hardware>
     )
@@ -99,7 +99,7 @@ function Experience() {
           {showingDesktop ? (
             <Desktop />
           ) : (
-            <Hardware screenRef={screenRef}>
+            <Hardware screenRef={screenRef} assemblyRef={outerRef}>
               <LoginScreen onLogin={session.login} />
             </Hardware>
           )}
@@ -113,8 +113,8 @@ function Experience() {
     return (
       <Hardware
         screenRef={screenRef}
+        assemblyRef={outerRef}
         assemblyProps={{
-          ref: outerRef,
           initial: toMotionValues(initial),
           animate: target ? toMotionValues(target) : undefined,
           transition: { duration: 0.72, ease: [0.4, 0, 0.2, 1] },

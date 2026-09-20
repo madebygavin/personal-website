@@ -4,8 +4,12 @@ import { motion, type HTMLMotionProps } from 'motion/react'
 interface HardwareProps {
   children: ReactNode
   screenRef?: Ref<HTMLDivElement>
+  // Always passed (even when not animating) so Motion attaches the ref at
+  // initial mount — it does not wire up a ref added on a later render to an
+  // already-mounted motion component (section 7.3).
+  assemblyRef?: Ref<HTMLDivElement>
   // Passed through to the assembly wrapper so callers can drive the zoom
-  // transition (ref, animate, transition, onAnimationComplete — section 7.3).
+  // transition (animate, transition, onAnimationComplete — section 7.3).
   assemblyProps?: HTMLMotionProps<'div'>
 }
 
@@ -13,13 +17,14 @@ interface HardwareProps {
 // the screen itself is presentational, so it is hidden from assistive tech.
 // All dimensions are relative (%, aspect-ratio) so the whole assembly scales
 // together as the viewport shrinks on tablets (section 3, gap #13).
-export function Hardware({ children, screenRef, assemblyProps }: HardwareProps) {
+export function Hardware({ children, screenRef, assemblyRef, assemblyProps }: HardwareProps) {
   const { style: assemblyStyle, ...restAssemblyProps } = assemblyProps ?? {}
 
   return (
     <div className="flex min-h-dvh w-full items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_top,_#2a2d34_0%,_#0b0c10_70%)] p-6">
       <motion.div
         {...restAssemblyProps}
+        ref={assemblyRef}
         className="flex flex-col items-center"
         style={{ width: 'min(1100px, 92vw)', ...assemblyStyle }}
       >

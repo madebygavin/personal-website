@@ -9,7 +9,7 @@ export function Desktop() {
   const session = useSession()
 
   return (
-    <div className="flex h-full min-h-dvh w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_top,_#2c2f38_0%,_#0b0c10_75%)] text-white">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_top,_#2c2f38_0%,_#0b0c10_75%)] text-white">
       <div className="flex gap-3">
         <button
           type="button"
