@@ -41,8 +41,8 @@ This repo is currently run with a **PM / engineer / reviewer split** across thre
 | M0 | Scaffold | ✅ Done | ✅ | ✅ (0 tests, pass) | ✅ | n/a (blank page) |
 | M1 | Landing & login screen | 🟡 Code complete, visually spot-checked | ✅ | ✅ | ✅ | ✅ landing screen screenshot looks correct (see section 8) |
 | M2 | Boot & zoom transition | ✅ Done | ✅ | ✅ | ✅ | ✅ fixed + re-verified (see section 8, section 4a #1 resolved) |
-| M3 | Desktop shell | ✅ Done, awaiting Gavin's commit approval | ✅ | ✅ | ✅ | ✅ 10+ screenshots in `.qa/`, spot-checked by PM; reviewer traced live keyboard behavior |
-| M4 | Window system & apps | ⬜ Not started | — | — | — | — |
+| M3 | Desktop shell | ✅ Done, committed `201f81a` | ✅ | ✅ | ✅ | ✅ 10+ screenshots in `.qa/`, spot-checked by PM; reviewer traced live keyboard behavior |
+| M4 | Window system & apps | 🔵 Assigned to engineer | — | — | — | — |
 | M5 | Mobile | ⬜ Not started | — | — | — | — |
 | M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
 | M7 | Deployment | ⬜ Not started | — | — | — | — |
@@ -53,11 +53,11 @@ This repo is currently run with a **PM / engineer / reviewer split** across thre
 
 ## 2. Currently in progress
 
-M3 is fully done — engineer implemented, PM sanity-checked, reviewer reviewed, fixes made, both PM and reviewer independently re-verified the fixes. All three sessions currently idle/standing by. **Waiting on Gavin's commit approval** (see section 3).
+M3 is committed (`201f81a`). Engineer has just been assigned M4 (Window system & apps). Reviewer is on standby, briefed that M4 is coming.
 
 ## 3. Next up
 
-Asking Gavin now whether to commit M3. Once approved: PM commits, then assigns M4 (Window system & apps) to the engineer — the new `useFocusTrap` hook was built specifically for reuse there.
+Engineer implements M4. Same pipeline as M3: engineer reports → PM sanity-check → reviewer review → PM triages/loops fixes → Gavin commit approval.
 
 ---
 
