@@ -9,6 +9,27 @@ Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not*
 
 ---
 
+## 0. Team & operating model (as of 2026-09-20)
+
+This repo is currently run with a **PM / engineer split** across two Claude Code sessions on Gavin's machine:
+
+- **PM session** — coordinates, assigns tasks, tracks this file, reviews the engineer's diffs, re-runs lint/test/build independently before trusting a "done" report, talks to Gavin, and is the only one who commits (and only when Gavin explicitly asks). **Does not write feature code.**
+- **Engineer session** — implements exactly the task the PM assigns, verifies its own work (`npm run lint && npm run test -- --run && npm run build`, plus a real check for anything visual/behavioral), and reports back to the PM with: what it did, files touched, verification results, any deviations or blockers. **Does not commit, and does not edit `PROGRESS.md` or `CLAUDE.md` directly** — those are the PM's to avoid two sessions racing on the same file. Report status via `SendMessage` to the PM instead.
+
+**Current mapping** (session names are assigned by the harness and will change if a session restarts — check `ListAgents` and update this line, don't assume the names below stay valid):
+- PM: `personal-website-b5`
+- Engineer: `personal-website-1d`
+
+**If you're a new session picking this up:** run `ListAgents`. If a PM session is live, message it and wait for a task rather than starting independent work — it's tracking state you don't have. If no PM is live (Gavin only has one session open), there's no split in effect right now; work normally per section 9's rules and update this file yourself.
+
+**Task protocol:**
+1. PM assigns a task via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything the engineer needs from current `PROGRESS.md` state.
+2. Engineer works, verifies, and messages back — no commit, no tracker edits.
+3. PM reviews (reads the diff, re-runs lint/test/build itself — doesn't just trust the report), updates `PROGRESS.md`, and either sends the engineer changes to make, or asks Gavin for commit approval.
+4. If the engineer session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or picking up the code itself.
+
+---
+
 ## 1. Status at a glance
 
 | # | Milestone | Status | Lint | Test | Build | Visual QA |

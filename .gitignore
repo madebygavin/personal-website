@@ -29,3 +29,8 @@ Thumbs.db
 
 # coverage
 coverage
+
+# local QA artifacts (screenshots, ad hoc repro scripts) — never committed,
+# but kept on disk (not deleted) so a verification claim stays auditable
+# within a session. See PROGRESS.md section 0/9.
+.qa/

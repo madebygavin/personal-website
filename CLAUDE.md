@@ -2,7 +2,7 @@
 
 ## Read these first, in this order
 
-1. **`PROGRESS.md`** — current status: what's done, in progress, next, blockers, deviations, open decisions. This is the live log; always check it before doing anything else.
+1. **`PROGRESS.md`** — current status: what's done, in progress, next, blockers, deviations, open decisions. This is the live log; always check it before doing anything else. **Check section 0 first** — this repo may be run with a PM/engineer session split. If a PM session is live (run `ListAgents`), message it and wait for a task instead of starting independent work.
 2. **`PROJECT_BRIEF.md`** — the full spec. Sections 2 (Locked Decisions) and 13 (Out of Scope) are binding. Do not deviate without asking Gavin.
 
 ## Working rules
