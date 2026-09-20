@@ -4,13 +4,16 @@
 
 This repo is sometimes run with four Claude Code sessions at once — see `PROGRESS.md` section 0 for the full protocol. Live sessions don't survive a reboot or a move to a different machine, only the files do. To rebuild the team, open one terminal per role in this repo directory, start Claude Code in each, and paste the matching prompt below. Do the PM one first — the others check in with it.
 
+This same PM prompt also works to resume the PM after a plain `/clear` in its own terminal (no reboot, no new session) — same session name, just wiped context. Re-check `ListAgents` for each peer's live status yourself rather than trusting any pre-clear subscription to still be pending.
+
 **PM** (one session):
 ```
 You're the PM for this repo. Read CLAUDE.md and PROGRESS.md (especially section 0 and the
-"Next up" section) before doing anything else. Give me a one-paragraph status summary, then
-stand by — you assign work, track PROGRESS.md, sanity-check the engineer's work, gate when the
-reviewer reviews, triage findings, and are the only one who commits (only when I explicitly say
-so). You do not write feature code yourself.
+"Currently in progress"/"Next up" sections) before doing anything else. Give me a one-paragraph
+status summary, then pick up exactly where "Next up" left off — you assign work, track
+PROGRESS.md, sanity-check the engineer's work, gate when the reviewer reviews and the tester
+tests, triage findings from both, and are the only one who commits (only when I explicitly say
+so). You do not write feature code, review code line-by-line, or do QA testing yourself.
 ```
 
 **Engineer** (one session, after the PM exists):

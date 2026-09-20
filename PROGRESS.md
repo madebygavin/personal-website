@@ -46,7 +46,7 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 | M1 | Landing & login screen | 🟡 Code complete, visually spot-checked | ✅ | ✅ | ✅ | ✅ landing screen screenshot looks correct (see section 8) |
 | M2 | Boot & zoom transition | ✅ Done | ✅ | ✅ | ✅ | ✅ fixed + re-verified (see section 8, section 4a #1 resolved) |
 | M3 | Desktop shell | ✅ Done, committed `201f81a` | ✅ | ✅ | ✅ | ✅ 10+ screenshots in `.qa/`, spot-checked by PM; reviewer traced live keyboard behavior |
-| M4 | Window system & apps | 🔵 Assigned to engineer | — | — | — | — |
+| M4 | Window system & apps | 🟡 Code complete, awaiting review + test | ✅ | ✅ | ✅ | ✅ 7+ screenshots in `.qa/`, spot-checked by PM (drag-constraint fix confirmed) |
 | M5 | Mobile | ⬜ Not started | — | — | — | — |
 | M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
 | M7 | Deployment | ⬜ Not started | — | — | — | — |
@@ -57,11 +57,16 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 
 ## 2. Currently in progress
 
-M3 is committed (`201f81a`). Engineer has just been assigned M4 (Window system & apps). Reviewer is on standby, briefed that M4 is coming.
+**PM is in a HOLD state as of 2026-09-20 ~16:10, at Gavin's explicit request** ("hold on other agents, ask me to clear when it's possible") — not sending new tasks or recheck requests to anyone until Gavin says to continue. If you're a freshly-cleared PM reading this, stay in that hold state too until Gavin explicitly says go, even though you won't remember agreeing to it — this line is that agreement.
+
+Status of each session at the moment of the hold (re-check `ListAgents` yourself, this is a snapshot, not live):
+- **Engineer** (`personal-website-1d`) — idle. Finished all 3 M4 fix items (2 should-fix + 1 bundled nit), PM-verified by reading the code directly, lint/test/build clean. Flagged it has no browser tool to visually confirm; PM checked too, also none available. Not blocking — folded into the tester's queued M4 task instead of a special request. **Safe to clear.**
+- **Reviewer** (`personal-website-f5`) — idle. Already did the M4 review (2 should-fix found, both fixed by the engineer — see section 8) and was cleared+re-briefed once already today. **Safe to clear again if Gavin wants**, but there's a pending recheck it should do once PM comes off hold (of the 3 files the engineer just fixed) — that recheck hasn't been requested yet.
+- **Tester** (`personal-website-30`) — was still busy on the M0–M3 QA pass as of the last check. **Do not clear while busy** — re-check `ListAgents` before assuming it's finished.
 
 ## 3. Next up
 
-Engineer implements M4. Same pipeline as M3: engineer reports → PM sanity-check → reviewer review → PM triages/loops fixes → Gavin commit approval.
+When Gavin says to resume: (1) send the reviewer a recheck request for the 3 files the engineer just fixed (`content.ts`, `ContactApp.tsx`, `ExperienceApp.tsx` — see section 8 for exactly what changed), (2) wait for the tester's M0–M3 report, then hand it the M4 task (already drafted in an earlier message to it — covers the education badge and aria-label fixes as part of normal M4 testing, no separate ask needed), (3) once both come back clean, ask Gavin for commit approval on all of M4.
 
 ---
 
@@ -125,6 +130,43 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### M4 fixes made, PM-verified; reviewer cleared and re-briefed; PM told to hold (2026-09-20, ~16:00–16:10)
+**Engineer** made all 3 fixes: (1) the 4 hardcoded `aria-label`s now route through new `uiStrings` entries (`notesNavLabel`, `skillCategoriesNavLabel`, `projectFiltersNavLabel`, `contactChannelsNavLabel`) via `t()`; (2) `ContactApp.tsx` got a `CHANNEL_LABEL` id-keyed `Record` (same pattern as the existing `CHANNEL_ICON`/`CHANNEL_HREF`), replacing the 3 positional lookups; (3) `ExperienceEntry.kind` is now used — education entries get a visually distinct timeline dot (ring vs. solid) and a small badge with a graduation-cap icon and localized "Education"/"Học vấn" label. Lint/test/build clean. **Engineer flagged, unprompted, that it has no browser tool in its sandbox to visually confirm these** — good instinct per CLAUDE.md's rule rather than silently asserting confidence it didn't have.
+
+**PM verification:** read all 3 fixes directly in `content.ts`, `ContactApp.tsx`, and `ExperienceApp.tsx` — all correct, matching the report exactly. Independently re-ran lint/test/build (clean, same 5 app chunks, only individual chunk sizes shifted slightly from the new strings/markup). **Also checked for a browser tool in this session's own sandbox — none available either.** Per PROGRESS.md's own standing lesson (§4a#2: browser tooling is per-sandbox, not universal, don't assume), this is now logged rather than silently skipped: the education badge and the 4 aria-label strings in VI are unverified visually by anyone yet. Not treated as a blocker — folded into the tester's already-queued M4 task instead of spinning up a new special request.
+
+**Gavin then cleared the reviewer session** (`personal-website-f5`) to save credit, and asked the PM to hold off contacting any of the three sessions further until told to continue, and to proactively flag safe-clear points instead of waiting to be asked. PM re-briefed the reviewer from scratch (it has zero memory of the M4 review above, but nothing is actually lost — it's fully captured in this file) and confirmed it re-oriented. PM is now holding as instructed; nothing further sent to engineer/reviewer/tester pending Gavin's go-ahead.
+
+### M4 review complete — 2 should-fix, sent back to engineer (2026-09-20, ~14:05)
+Reviewer (`personal-website-f5`) re-ran lint/test/build (matched PM's numbers), confirmed real per-app code-splitting in the build output, grepped for Apple/trademark leaks (clean). **No blocking findings.**
+
+**Should-fix (PM independently confirmed both by reading the code, then sent to the engineer):**
+1. Hardcoded English `aria-label`s in all 4 new app files (`AboutApp.tsx:13`, `SkillsApp.tsx:13`, `ProjectsApp.tsx:58`, `ContactApp.tsx:27`) — violates `CLAUDE.md`'s binding i18n rule; a VI-language screen-reader user would hear these in English. Confirmed via grep: exactly the 4 lines reported, nothing else missed.
+2. `ContactApp.tsx` looks up action-button hrefs by id (`CHANNEL_HREF.email/.linkedin/.github`, safe against reordering) but looks up their visible labels by array position (`contactChannels[0/1/2].label`). Since section 1 explicitly promises Gavin can reconfigure content by editing `content.ts` alone, reordering `contactChannels` there is a very plausible future edit — and it would silently mismatch a button's icon/link with the wrong label. PM read the file and confirmed the inconsistency exactly as described.
+
+**Bundled in as a quick optional fix (not blocking, but cheap to batch):** `ExperienceEntry.kind` (`'work' | 'education'`) is set in `content.ts` but never read in `ExperienceApp.tsx` — asked the engineer to use it to visually distinguish the education entry rather than leave it inert.
+
+**Deferred to M6 backlog (not blocking):** `SkillsApp`'s level bars have no `role="progressbar"` (reviewer's own assessment: not actually inaccessible, the percentage is already shown as text); a defensive timeout fallback for `Window`'s `onAnimationComplete`-gated drag-enable, in case that event somehow never fires (reviewer confirmed the current blast radius is narrow — only drag is affected, not the whole window — and this exact pattern is already relied on elsewhere in the codebase for the M2 zoom transition, so it's an accepted existing risk shape, not a new one).
+
+**Reviewer also verified, unprompted beyond the specific questions asked:** the drag-gating has no reachable stuck-forever path; `Window`'s non-modal Escape-when-focused-only behavior and bidirectional Tab flow (window → dock forward, window → menu bar backward) both work as designed by tracing actual DOM order in `Desktop.tsx`; `DockHandle` focus restoration has no reachable desync since all 5 dock icons stay mounted regardless of which app is open.
+
+### M4 — Window system & apps — 🟡 Code complete, awaiting review + test (2026-09-20, ~13:50)
+**What shipped (engineer: `personal-website-1d`):**
+- New: `components/desktop/Window.tsx`, `components/apps/{AboutApp,SkillsApp,ExperienceApp,ProjectsApp,ContactApp}.tsx`.
+- Modified: `Desktop.tsx` (window layer + `React.lazy`-loaded apps), `Dock.tsx` (dock clicks now open real windows; exposes `DockHandle.focusApp` via `forwardRef`/`useImperativeHandle` for focus restoration), `data/content.ts` (+all 5 apps' bilingual placeholder content, `TODO(gavin)`-marked per the existing pattern).
+- Covers PROJECT_BRIEF.md 7.7–7.8: single window (opening another replaces it), default sizing, title-bar-only drag constrained to the free area, traffic-light buttons (red works, yellow/green disabled), internal scroll, Escape-when-focused close, focus-in-on-open/restore-on-close, and all 5 apps in their spec'd layouts (notes/settings/timeline/file-browser/mail-style).
+
+**Real bug found and fixed — worth understanding, it's a non-obvious Motion interaction:** a `motion.div` that both scale-animates in on mount (`initial={{scale:0.96}} → animate={{scale:1}}`) *and* has `dragConstraints` resolves the constraint box against the pre-settle scale, even after the entrance animation visually finishes — so drag let the window overshoot the free area by a few percent (~17.6px/~12px, matching the 0.96↔1 scale ratio). Fixed by gating `drag`/`dragConstraints` behind the entrance animation's actual `onAnimationComplete` (reduced-motion starts already-"entered" since there's no scale mismatch there). PM read `Window.tsx` directly and confirmed the gating logic is correct; spot-checked `.qa/m4-03-dragged-constrained.png` — window sits flush at the free area's exact top-left corner, no overshoot visible.
+
+**Process lesson worth keeping (engineer disclosed this unprompted):** the engineer's first diagnosis was wrong (blamed `useDragControls()` call site) and appeared to fix a narrow isolated test — but that test had incidentally also dropped the scale animation, masking that nothing was actually fixed. Only caught because the engineer re-tested against the *real app* rather than trusting the isolated test, which immediately showed the overshoot was still there. **Lesson: an isolated repro passing is not the same as the actual app working — always re-verify a fix against real usage before reporting it done**, especially when a test's setup differs from the real component's props/context in any way.
+
+**Design decisions flagged for Gavin (none locked by the brief):**
+1. `Window` is deliberately not modal — no focus trap (unlike `AboutDialog`). Escape closes it only while focus is inside (scoped `onKeyDown`, not a document listener), matching section 7.7's literal wording ("Esc closes the window when focused"). Tab flows freely from window content into the dock/menu bar.
+2. Drag area is the *strict* free area between menu bar and dock (window can never go even partially under either) — stricter than the brief's stated minimum ("never fully under the menu bar or off-screen"), chosen for simplicity and guaranteed discoverability.
+3. Apps are `React.lazy`-loaded per section 10's performance bar — confirmed in the build output as separate chunks (0.86–3.44 KB each).
+
+**Verification:** tsc/eslint/vitest (14/14)/build all clean (per-app code-splitting confirmed: 5 separate small chunks). Live Playwright pass covering app-open/replace-not-stack, already-open-icon-does-nothing, close/disabled-buttons, title-bar-only drag, drag constraint, Escape-only-when-focused (confirmed it does NOT close from elsewhere, e.g. Control Center), focus in/out, Projects detail view, EN/VI content. Zero console errors. **PM verification:** read `Window.tsx`, `Desktop.tsx`, `Dock.tsx` directly (not just the report), independently re-ran lint/test/build (matched: 493.11 KB main chunk + 5 app chunks), spot-checked the drag-constraint screenshot. Handed to reviewer and tester in parallel (see section 2).
 
 ### Git remote added, repo pushed (2026-09-20, ~13:40)
 Gavin asked how to rebuild the PM/engineer/reviewer session split after a reboot or on a different PC. Answer: the files (this repo) persist via git; the live sessions and their roles don't, and have to be re-bootstrapped every time. Two things done about it:
