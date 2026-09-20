@@ -49,7 +49,15 @@ export function ControlCenter() {
       </button>
 
       {open && (
-        <div className="glass-panel absolute right-0 top-full mt-2 w-64 rounded-[var(--radius-window)] p-4 text-sm">
+        // Fixed to the viewport edge rather than the trigger button so the
+        // panel can't overflow off-screen at narrow widths (the trigger sits
+        // inboard of the right edge, so `absolute right-0` on the button
+        // doesn't leave room for a 256px panel below ~430px). This is only
+        // correct because MenuBar is `fixed inset-x-0 top-0 h-7` — its edges
+        // coincide with the viewport's. If MenuBar's positioning, height, or
+        // full-width-ness ever changes, these values (right-3 top-8) need to
+        // change with it; they are not independently correct.
+        <div className="glass-panel fixed right-3 top-8 w-64 rounded-[var(--radius-window)] p-4 text-sm">
           <fieldset>
             <legend className="mb-1.5 text-xs font-medium opacity-70">{t(uiStrings.appearance)}</legend>
             <div className="flex w-full rounded-[var(--radius-control)] bg-black/10 p-0.5">

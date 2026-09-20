@@ -13,6 +13,17 @@ type MotionTarget = Pick<ZoomTransform, 'x' | 'y' | 'scaleX' | 'scaleY'>
 
 const IDENTITY: MotionTarget = { x: 0, y: 0, scaleX: 1, scaleY: 1 }
 
+// Restart boot overlay's fade variants. Named (rather than inline
+// animate/exit objects) so onAnimationComplete's `definition` argument can
+// tell "enter finished" from "exit finished" apart. Shared as constants
+// (not re-typed at each call site) so the variants object and the
+// onAnimationComplete check below can't drift out of sync under a rename —
+// `definition` types as a bare `string | string[]`, with no compiler link
+// back to the variants object's own keys.
+const OVERLAY_VISIBLE = 'visible'
+const OVERLAY_HIDDEN = 'hidden'
+const OVERLAY_VARIANTS = { [OVERLAY_VISIBLE]: { opacity: 1 }, [OVERLAY_HIDDEN]: { opacity: 0 } }
+
 function toMotionValues(t: MotionTarget) {
   return { x: t.x, y: t.y, scaleX: t.scaleX, scaleY: t.scaleY }
 }
@@ -25,6 +36,27 @@ function Experience() {
   // Cached across the session: computed once when zooming in, reused as the
   // starting point when zooming back out (section 7.3).
   const [zoomTransform, setZoomTransform] = useState<ZoomTransform | null>(null)
+
+  // Desktop must stay inert for the restart boot overlay's full lifetime,
+  // including its exit fade — not just while session.phase === 'booting'.
+  // The phase flips back to 'desktop' the instant the fade starts, but the
+  // overlay (opaque, z-50) is still visibly covering the screen for another
+  // ~150-300ms via AnimatePresence, and keyboard activation (Enter/Space on
+  // an already-focused element) doesn't go through hit-testing the way a
+  // click does, so it isn't blocked by the overlay just still being on top.
+  // Gated off the overlay's own onExitComplete instead, same pattern as
+  // Window.tsx's entered/onAnimationComplete gating for drag.
+  // Adjusted during render (not an effect) on the transition into
+  // restartOverlayShowing — the React-endorsed "adjusting state when a prop
+  // changes" pattern, so the very first render where the overlay appears
+  // already has Desktop inert instead of lagging a render behind.
+  const restartOverlayShowing = session.phase === 'booting' && session.isRestarting
+  const [desktopInert, setDesktopInert] = useState(restartOverlayShowing)
+  const [prevRestartOverlayShowing, setPrevRestartOverlayShowing] = useState(restartOverlayShowing)
+  if (restartOverlayShowing !== prevRestartOverlayShowing) {
+    setPrevRestartOverlayShowing(restartOverlayShowing)
+    if (restartOverlayShowing) setDesktopInert(true)
+  }
 
   useLayoutEffect(() => {
     if (session.phase !== 'zooming-in' || reducedMotion) return
@@ -64,16 +96,37 @@ function Experience() {
     const showBootOverlay = session.phase === 'booting'
     return (
       <>
-        <Desktop />
+        {/* inert (not just aria-hidden) so a keyboard user can't Tab into, or
+            activate, Desktop controls that are fully hidden behind the opaque
+            restart overlay (section 6: "ignore further input" while
+            booting) — kept inert through the overlay's exit fade via the
+            motion.div's own onAnimationComplete below, see desktopInert's
+            comment. AnimatePresence.onExitComplete was measured empirically
+            (a Playwright repro polling the overlay's live computed opacity
+            through the full fade, both normal and reduced motion) to fire
+            while the overlay was still substantially opaque — nowhere near
+            real completion. Root cause not fully isolated (would need
+            Motion's internal exit-tracking source), but named variants +
+            checking onAnimationComplete's `definition` argument on the
+            motion.div itself was empirically confirmed reliable instead:
+            `inert` only lifted once opacity had actually decayed to ~0 and
+            the overlay was removed from the DOM, across 3 separate runs. */}
+        <div className="h-full w-full" inert={desktopInert}>
+          <Desktop />
+        </div>
         <AnimatePresence>
           {showBootOverlay && (
             <motion.div
               key="restart-boot"
               className="fixed inset-0 z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              variants={OVERLAY_VARIANTS}
+              initial={OVERLAY_HIDDEN}
+              animate={OVERLAY_VISIBLE}
+              exit={OVERLAY_HIDDEN}
               transition={{ duration: reducedMotion ? 0.15 : 0.3 }}
+              onAnimationComplete={(definition) => {
+                if (definition === OVERLAY_HIDDEN) setDesktopInert(false)
+              }}
             >
               <BootScreen onComplete={session.bootComplete} />
             </motion.div>

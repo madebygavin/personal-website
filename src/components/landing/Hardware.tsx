@@ -29,7 +29,10 @@ export function Hardware({ children, screenRef, assemblyRef, assemblyProps }: Ha
         style={{ width: 'min(1100px, 92vw)', ...assemblyStyle }}
       >
         <div className="w-full rounded-[3%] border border-white/10 bg-gradient-to-b from-[#3c3f46] to-[#1c1d21] p-[1.4%] shadow-[0_40px_90px_rgb(0_0_0_/_55%)]">
-          <div ref={screenRef} className="relative aspect-[16/10] w-full overflow-hidden rounded-[2%] bg-black">
+          <div
+            ref={screenRef}
+            className="relative aspect-[16/10] w-full min-h-[400px] overflow-hidden rounded-[2%] bg-black"
+          >
             {children}
           </div>
         </div>
