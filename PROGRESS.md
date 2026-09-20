@@ -1,6 +1,6 @@
 # Progress Tracker
 
-**Last updated:** 2026-09-20 by Claude (Sonnet 5), session `personal-website-b5`
+**Last updated:** 2026-09-20 ~19:15 by Claude (Sonnet 5), session `personal-website-b5`
 **Read this file first**, before `PROJECT_BRIEF.md`, at the start of any session. `PROJECT_BRIEF.md` is the spec (binding, changes rarely). This file is the log (changes every session) — it tells you where things actually stand right now, including things the brief can't know: what's verified, what's deviated, what's blocked, and **which session is doing what**.
 
 Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not** visually verified · 🔵 In progress · ⬜ Not started · 🔴 Blocked
@@ -51,19 +51,21 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 | M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
 | M7 | Deployment | ⬜ Not started | — | — | — | — |
 
-**Update 2026-09-20 ~19:00:** all 3 confirmed §8a regressions (M1 login clipping, M3 Control Center overflow, M2 keyboard-focus-behind-restart-overlay) are now fixed and dynamically re-verified — the M2 fix took 3 rounds because the first two "fixes" looked correct under careful static review by both the PM and the reviewer, but only the tester's live, timing-based repro caught that they weren't. M4 is fully clean (review + dynamic). Only §8a #4 (a possible reduced-motion crash, headless-only so far) remains open — no session on the team has real interactive browser access, so this needs Gavin directly. See section 8a for full detail and the milestone log (section 8) for the fix history.
+**Update 2026-09-20 ~19:00:** all 3 confirmed §8a regressions (M1 login clipping, M3 Control Center overflow, M2 keyboard-focus-behind-restart-overlay) are now fixed and dynamically re-verified — the M2 fix took 3 rounds because the first two "fixes" looked correct under careful static review by both the PM and the reviewer, but only the tester's live, timing-based repro caught that they weren't. M4 is fully clean (review + dynamic).
+
+**Update 2026-09-20 ~19:15:** Gavin approved the commit — the batch (3 §8a fixes + M4) is landed as `105592b` (M4) and `cabedfe` (the 3 fixes), pushed to `origin/main`. Gavin also disposed of §8a #4: accept it as an unconfirmed, low-probability edge case and move on rather than chase it further (see section 4a). M5 (Mobile) is next — see section 3.
 
 ---
 
 ## 2. Currently in progress
 
-**Hold lifted 2026-09-20 ~17:00 — Gavin said to proceed with the queued plan. As of ~19:00, the whole fix cycle is closed out:**
+**Both open items from the previous "Next up" are now resolved (2026-09-20 ~19:15):**
+1. Gavin approved the commit — landed as `105592b` (M4) and `cabedfe` (3 §8a fixes), already on `origin/main`. Working tree confirmed clean.
+2. Gavin's call on §8a #4: accept as an unconfirmed, low-probability edge case, don't chase it further. Logged in section 4a.
 
-- **Engineer** (`personal-website-1d`) — ✅ idle, nothing further queued. Delivered all 3 §8a fixes across 2–3 rounds each (see the milestone log below for the full history, including the M2/#3 fix that needed 3 attempts before it actually held up under dynamic testing).
-- **Reviewer** (`personal-website-f5`) — ✅ idle. Signed off on the M4 recheck and all rounds of the §8a fix files, including the final constants extraction.
-- **Tester** (`personal-website-30`) — ✅ idle. Full M4 dynamic pass clean; independently re-confirmed the §8a #3 fix with a tighter methodology after an initial ambiguous result, rather than accepting a clean-looking read at face value.
-
-**Waiting on Gavin for two things:** (1) commit approval for the full batch (3 §8a fixes + M4), (2) a decision on §8a #4 — see section 3.
+- **Engineer** (`personal-website-1d`) — idle, about to be assigned M5 (Mobile).
+- **Reviewer** (`personal-website-f5`) — idle, standing by for M5.
+- **Tester** (`personal-website-30`) — idle, standing by for M5.
 
 ### Tester's M4 + retest pass — 1 bug reopened, everything else clean (2026-09-20, ~18:10)
 Tester (`personal-website-30`) ran with headless Chromium again (temp-installed `playwright-core`, fully uninstalled after, confirmed via `npm uninstall` + grep — same clean process as its first pass). 43 screenshots + 5 repro scripts in `.qa/` (`tester-m4-*`/`tester-retest*` prefix), nothing deleted. Confirmed no real (non-headless) browser access in its sandbox either — did not re-attempt §8a #4 (correctly avoided submitting a second headless data point).
@@ -106,12 +108,14 @@ Reviewer checked all 5 app files (not just the 3 named), confirmed the 4 aria-la
 
 ## 3. Next up
 
-Everything the team can do without Gavin is done: all 3 confirmed §8a regressions are fixed and independently verified (dynamically, not just statically), M4 is fully clean, and both the reviewer and tester are idle with nothing further queued. Two things need Gavin directly before anything moves further:
+**M5 — Mobile** (PROJECT_BRIEF.md section 7.9 + section 12), about to be assigned to the engineer:
+- Landing: full-screen login screen under 768px, no hardware frame, same info/Login button as desktop.
+- After boot: home screen — wallpaper, top status strip (live clock + Control Center icon), grid of 5 large rounded app icons with labels.
+- App open: full-screen sheet slides up, header with title + close button, content reflows to a single column (sidebars → top segmented control or list).
+- Control Center: same functionality (appearance, brightness, language), mobile-appropriate presentation.
+- Accept: fully usable at 375px and 414px widths, no horizontal scroll, landscape doesn't break — reuse the existing session/preferences state, `content.ts`, and `useIsMobile` hook slot already planned in the file layout.
 
-1. **Commit approval** for the full batch — 3 §8a bug fixes (`Hardware.tsx`, `ControlCenter.tsx`, `App.tsx`) plus M4 (`Window.tsx`, the 5 app files, `Desktop.tsx`/`Dock.tsx` changes, `content.ts` additions). PM has independently verified every round via direct diff reads and repeated lint/test/build; still needs the explicit go-ahead per section 0's protocol ("only commits, and only when Gavin explicitly asks").
-2. **§8a #4 disposition** — the possible reduced-motion crash (Log Out clicked within ~150ms of desktop appearing) has only ever been reproduced in headless Chrome; the tester, engineer, and PM have all checked and none have real interactive browser access. Options: Gavin tries the repro himself, or the team accepts it as an unconfirmed low-probability edge case and moves on (logged either way, not silently dropped).
-
-Once Gavin weighs in on both, PM commits (if approved) and then either assigns M5 or a fix for #4, whichever Gavin prefers.
+Once the engineer delivers, same protocol as M1–M4: PM sanity pass → reviewer + tester in parallel → triage → Gavin for commit approval.
 
 ---
 
@@ -120,6 +124,8 @@ Once Gavin weighs in on both, PM commits (if approved) and then either assigns M
 Nothing currently blocking. The full §8a fix batch + M4 are uncommitted — see sections 2/3 — but that's a pending action awaiting Gavin's go-ahead, not a blocker.
 
 ## 4a. Resolved blockers (kept for history — don't delete, append instead)
+
+0. **⚪ DISPOSED (not fixed) — §8a #4, possible reduced-motion crash.** Repro (log in, open Logo menu, click Log Out within ~150ms of desktop first appearing under reduced motion) was only ever reproducible in headless Chrome; no session on the team (engineer, tester, PM) had real interactive browser access to confirm or deny it. Gavin's explicit decision (2026-09-20 ~19:15): accept as an unconfirmed, low-probability edge case and move on rather than have the team keep chasing it or harden defensively against an unconfirmed crash. Full detail and PM's plausible-root-cause trace (React remounting `Desktop`'s subtree mid-interaction as `session.phase` flips from `'zooming-in'` to `'desktop'`) preserved in section 8a #4. **Revisit if:** it resurfaces in real usage, or M6's polish pass touches the boot/zoom phase logic anyway.
 
 1. **✅ RESOLVED — M2 zoom transition bug.** Found and fixed by session `personal-website-1d`, independently re-verified by `personal-website-b5` (this session). Two root causes:
    - `Hardware.tsx`'s assembly `motion.div` only received `ref={outerRef}` starting at the `zooming-in` phase render — Motion v13 does not attach a ref added on a later render to an already-mounted instance (only at initial mount), so `outerRef.current` stayed permanently `null` and the transform never computed.
@@ -175,6 +181,9 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### Batch committed + pushed; §8a #4 disposed by Gavin; M5 up next (2026-09-20, ~19:15)
+PM session `personal-website-b5` was restarted after a `/clear`. Re-read `CLAUDE.md`/`PROGRESS.md`, ran `ListAgents` and confirmed all 3 peer sessions (`personal-website-1d` engineer, `personal-website-f5` reviewer, `personal-website-30` tester) still live and idle, matching the mapping already recorded in section 0 — no re-bootstrap needed. Checked `git status`/`git log` and found the two open items from the previous "Next up" had, in fact, already been actioned outside this session: `105592b` (M4) and `cabedfe` (the 3 §8a fixes) were already committed and pushed to `origin/main` (working tree clean, local `main` matches `origin/main` exactly) — the PROGRESS.md text just hadn't been updated to reflect it yet, so it still read as "waiting on Gavin." Brought Gavin the one remaining real decision (§8a #4 disposition) plus a confirmation on the already-landed commit; he confirmed the commit and chose to accept §8a #4 as an unconfirmed edge case (logged in section 4a #0). Updated this file's sections 1–4a to match reality. Proceeding to assign M5 to the engineer next.
 
 ### M4 fixes made, PM-verified; reviewer cleared and re-briefed; PM told to hold (2026-09-20, ~16:00–16:10)
 **Engineer** made all 3 fixes: (1) the 4 hardcoded `aria-label`s now route through new `uiStrings` entries (`notesNavLabel`, `skillCategoriesNavLabel`, `projectFiltersNavLabel`, `contactChannelsNavLabel`) via `t()`; (2) `ContactApp.tsx` got a `CHANNEL_LABEL` id-keyed `Record` (same pattern as the existing `CHANNEL_ICON`/`CHANNEL_HREF`), replacing the 3 positional lookups; (3) `ExperienceEntry.kind` is now used — education entries get a visually distinct timeline dot (ring vs. solid) and a small badge with a graduation-cap icon and localized "Education"/"Học vấn" label. Lint/test/build clean. **Engineer flagged, unprompted, that it has no browser tool in its sandbox to visually confirm these** — good instinct per CLAUDE.md's rule rather than silently asserting confidence it didn't have.
