@@ -13,26 +13,28 @@ Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not*
 
 ## 0. Team & operating model (as of 2026-09-20)
 
-This repo is currently run with a **PM / engineer / reviewer split** across three Claude Code sessions on Gavin's machine:
+This repo is currently run with a **PM / engineer / reviewer / tester split** across four Claude Code sessions on Gavin's machine:
 
-- **PM session** — coordinates, assigns tasks, tracks this file, gates when review happens, re-runs lint/test/build independently before trusting any "done" report, decides what happens with review findings, talks to Gavin, and is the only one who commits (and only when Gavin explicitly asks). **Does not write feature code and does not review code line-by-line** (that's the reviewer's job — PM's own checks are lint/test/build plus a sanity read of the diff, not a full review).
+- **PM session** — coordinates, assigns tasks, tracks this file, gates when review/testing happens, re-runs lint/test/build independently before trusting any "done" report, decides what happens with findings, talks to Gavin, and is the only one who commits (and only when Gavin explicitly asks). **Does not write feature code, does not review code line-by-line, does not do QA testing itself** — PM's own checks are lint/test/build plus a sanity read of the diff, not a substitute for the reviewer or tester.
 - **Engineer session** — implements exactly the task the PM assigns, verifies its own work (`npm run lint && npm run test -- --run && npm run build`, plus a real check for anything visual/behavioral), and reports back to the PM with: what it did, files touched, verification results, any deviations or blockers. **Does not commit, and does not edit `PROGRESS.md` or `CLAUDE.md` directly** — report to the PM instead, to avoid sessions racing on the same file.
-- **Reviewer session** — a strict senior code reviewer. **Only reviews work the PM has explicitly flagged as ready** (i.e. the engineer has already reported the task done) — it does not review a task while the engineer is still mid-flight, and does not go looking for work on its own. Given a diff/commit range by the PM, it reviews for correctness, security, performance, maintainability, and adherence to `PROJECT_BRIEF.md`, then reports findings and suggestions back to the PM — severity-ranked, with file/line references where possible. **Does not edit code, does not commit, does not talk to the engineer directly** — everything routes through the PM, which decides what to act on.
+- **Reviewer session** — a strict senior code reviewer, static analysis of the diff. **Only reviews work the PM has explicitly flagged as ready** — it does not review a task while the engineer is still mid-flight, and does not go looking for work on its own. Reviews for correctness, security, performance, maintainability, and adherence to `PROJECT_BRIEF.md`, then reports findings back to the PM — severity-ranked, with file/line references. **Does not edit code, does not commit, does not talk to the engineer or tester directly.**
+- **Tester session** — a senior QA/test engineer, dynamic/behavioral testing (actually running the app), complementary to the reviewer's static read. **Only tests work the PM has explicitly flagged as ready.** This project has **no backend** (`PROJECT_BRIEF.md` section 4) — "backend" testing here means the logic/state layer (session state machine, preferences persistence, i18n, timezone/clock/zoom utils), not a server. Also covers responsive UI across breakpoints, both themes, both languages, reduced motion, and keyboard-only usage. Reports bugs/findings to the PM only, severity-ranked, with repro steps and evidence kept in `.qa/` (never deleted). **Does not edit code, does not commit, does not talk to the engineer or reviewer directly.** Can run in parallel with the reviewer (different concerns: reading code vs. running it) rather than waiting in sequence, unless the PM says otherwise for a specific task.
 
 **Current mapping** (session names are assigned by the harness and will change if a session restarts — check `ListAgents` and update this line, don't assume the names below stay valid):
 - PM: `personal-website-b5`
 - Engineer: `personal-website-1d`
 - Reviewer: `personal-website-f5` (Gavin restarted the reviewer session at ~13:05 after `personal-website-ad` hit a cross-session messaging issue and couldn't reach the PM — see section 8. `personal-website-f5` has no memory of `-ad`'s in-progress M3 review; it was re-briefed and re-tasked from scratch.)
+- Tester: `personal-website-30` (joined ~13:45)
 
 **If you're a new session picking this up:** run `ListAgents`. If a PM session is live, message it and wait for a task rather than starting independent work — it's tracking state you don't have. If no PM is live (Gavin only has one session open), there's no split in effect right now; work normally per section 9's rules and update this file yourself.
 
 **Task protocol:**
 1. PM assigns a task to the engineer via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything needed from current `PROGRESS.md` state.
 2. Engineer works, verifies, and messages the PM back — no commit, no tracker edits.
-3. PM does a light sanity pass itself (re-runs lint/test/build, skims the diff for anything glaring) — not a full review.
-4. PM sends the reviewer the diff/commit range and asks for a strict review. Reviewer reports findings back to the PM only.
-5. PM triages the findings: sends any required fixes back to the engineer (loop back to step 2), or — if clean, or findings are minor/deferred — updates `PROGRESS.md` and asks Gavin for commit approval.
-6. If either session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or absorbing the work itself.
+3. PM does a light sanity pass itself (re-runs lint/test/build, skims the diff for anything glaring) — not a full review or test pass.
+4. PM hands the same completed work to the reviewer (static review) and the tester (dynamic/behavioral testing) — these can run in parallel. Both report findings back to the PM only.
+5. PM triages all findings from both: sends required fixes back to the engineer (loop back to step 2), or — if clean, or findings are minor/deferred — updates `PROGRESS.md` and asks Gavin for commit approval.
+6. If any session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or absorbing the work itself.
 
 ---
 

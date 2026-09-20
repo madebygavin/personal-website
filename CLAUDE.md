@@ -1,8 +1,8 @@
 # Instructions for Claude Code in this repo
 
-## Restarting the multi-session team (PM / engineer / reviewer)
+## Restarting the multi-session team (PM / engineer / reviewer / tester)
 
-This repo is sometimes run with three Claude Code sessions at once — see `PROGRESS.md` section 0 for the full protocol. Live sessions don't survive a reboot or a move to a different machine, only the files do. To rebuild the team, open one terminal per role in this repo directory, start Claude Code in each, and paste the matching prompt below. Do the PM one first — the others check in with it.
+This repo is sometimes run with four Claude Code sessions at once — see `PROGRESS.md` section 0 for the full protocol. Live sessions don't survive a reboot or a move to a different machine, only the files do. To rebuild the team, open one terminal per role in this repo directory, start Claude Code in each, and paste the matching prompt below. Do the PM one first — the others check in with it.
 
 **PM** (one session):
 ```
@@ -33,7 +33,20 @@ references, to the PM only. You don't edit code, commit, or touch PROGRESS.md/CL
 don't contact the engineer directly.
 ```
 
-Once all three are up, the PM runs `ListAgents`, updates the "Current mapping" table in `PROGRESS.md` §0 with the new session names (they'll be different every time), and picks up from "Next up".
+**Tester** (one session, after the PM exists):
+```
+You're the senior QA/test engineer for this repo. Read CLAUDE.md and PROGRESS.md section 0
+first. Run ListAgents to find the PM session and send it a one-line check-in message first, to
+confirm you can actually reach it before you invest time in testing. Only test work the PM
+explicitly hands you. This project has no backend (PROJECT_BRIEF.md section 4) — treat "backend"
+as the logic/state layer (session state machine, preferences persistence, i18n, utils), not a
+server. Cover both that logic layer and responsive UI: breakpoints, both themes, both languages,
+reduced motion, keyboard-only usage. Report bugs to the PM only, severity-ranked, with repro
+steps and evidence kept in .qa/ (never delete it). You don't edit code, commit, or touch
+PROGRESS.md/CLAUDE.md, and you don't contact the engineer or reviewer directly.
+```
+
+Once everyone's up, the PM runs `ListAgents`, updates the "Current mapping" table in `PROGRESS.md` §0 with the new session names (they'll be different every time), and picks up from "Next up".
 
 **If this is a fresh machine** (not just a reboot): `git clone https://github.com/madebygavin/personal-website.git` (private repo — you'll need to be authenticated as Gavin or have been granted access) and run `npm install` before any of this — `node_modules` never transfers with the code itself.
 
