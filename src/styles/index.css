@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg-base: #0b0c10;
+  --color-text: rgb(255 255 255 / 90%);
+  --color-accent: #5b9dff;
+
+  --glass-bg: rgb(30 32 38 / 60%);
+  --glass-border: rgb(255 255 255 / 12%);
+  --glass-shadow: 0 8px 32px rgb(0 0 0 / 40%);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg-base: #e8e9ec;
+  --color-text: rgb(20 20 22 / 90%);
+  --color-accent: #2f6fe0;
+
+  --glass-bg: rgb(255 255 255 / 65%);
+  --glass-border: rgb(0 0 0 / 8%);
+  --glass-shadow: 0 8px 32px rgb(0 0 0 / 12%);
+}
+
+/* Radii (section 9): window 16-20px, dock 24px, dock icons 14-16px, controls 10px */
+:root {
+  --radius-window: 18px;
+  --radius-dock: 24px;
+  --radius-dock-icon: 15px;
+  --radius-control: 10px;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg-base);
+  color: var(--color-text);
+  font-family: 'Inter Variable', sans-serif;
+}
