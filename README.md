@@ -27,4 +27,4 @@ npm run deploy    # build and deploy to Cloudflare Workers
 
 ## Status
 
-M0 (scaffold) in progress. See `PROJECT_BRIEF.md` section 12 for the full milestone plan.
+M0 (scaffold), M1 (landing/login screen) and M2 (boot + zoom transition) done. See `PROJECT_BRIEF.md` section 12 for the full milestone plan.
