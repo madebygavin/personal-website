@@ -43,15 +43,15 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 | # | Milestone | Status | Lint | Test | Build | Visual QA |
 |---|---|---|---|---|---|---|
 | M0 | Scaffold | ✅ Done | ✅ | ✅ (0 tests, pass) | ✅ | n/a (blank page) |
-| M1 | Landing & login screen | 🟡 Code complete, visually spot-checked | ✅ | ✅ | ✅ | ✅ landing screen screenshot looks correct (see section 8) |
-| M2 | Boot & zoom transition | ✅ Done | ✅ | ✅ | ✅ | ✅ fixed + re-verified (see section 8, section 4a #1 resolved) |
-| M3 | Desktop shell | ✅ Done, committed `201f81a` | ✅ | ✅ | ✅ | ✅ 10+ screenshots in `.qa/`, spot-checked by PM; reviewer traced live keyboard behavior |
-| M4 | Window system & apps | 🟡 Code complete, awaiting review + test | ✅ | ✅ | ✅ | ✅ 7+ screenshots in `.qa/`, spot-checked by PM (drag-constraint fix confirmed) |
+| M1 | Landing & login screen | 🔴 Regression found: real bug at 375/414px (§8a #1) | ✅ | ✅ | ✅ | ⚠️ full 6-breakpoint pass done, 1 confirmed bug |
+| M2 | Boot & zoom transition | 🔴 Regressions found: 2 bugs (§8a #3, #4) | ✅ | ✅ | ✅ | ⚠️ full pass done, 2 confirmed/suspected bugs |
+| M3 | Desktop shell | 🔴 Regression found: real bug at 375/414px (§8a #2) | ✅ | ✅ | ✅ | ⚠️ full pass done, 1 confirmed bug |
+| M4 | Window system & apps | 🟡 Code complete, fixes verified, awaiting reviewer recheck + tester pass | ✅ | ✅ | ✅ | ✅ spot-checked by PM; full dynamic test still pending |
 | M5 | Mobile | ⬜ Not started | — | — | — | — |
 | M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
 | M7 | Deployment | ⬜ Not started | — | — | — | — |
 
-**Nothing gets marked ✅ Done based on lint/test/build alone if the milestone's acceptance criteria (PROJECT_BRIEF.md section 12) are visual or behavioral.** M2 is now ✅: the zoom bug (section 4a #1) was fixed and re-verified by two independent sessions (see section 8). M1 got only a partial visual spot-check (one screenshot, one viewport) — encouraging, but 1280/1440/1920 + tablet widths are still unchecked, so it stays at 🟡 until someone (Gavin or a session with a working browser tool) confirms those.
+**Update 2026-09-20 ~16:40:** the tester's first full dynamic QA pass (section 8a) found 4 real should-fix bugs across M1/M2/M3 — milestones previously marked ✅/🟡 on the strength of spot-checks and code review, not full breakpoint/keyboard/timing sweeps. This is exactly why "Done" requires actual dynamic testing, not just lint/test/build and a couple of screenshots: static review and narrow spot-checks genuinely missed these. Status downgraded honestly rather than left looking clean. See section 8a for full detail and section 3 for what happens next (PM is holding per Gavin's request — awaiting go-ahead before sending fixes anywhere).
 
 ---
 
@@ -60,13 +60,13 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 **PM is in a HOLD state as of 2026-09-20 ~16:10, at Gavin's explicit request** ("hold on other agents, ask me to clear when it's possible") — not sending new tasks or recheck requests to anyone until Gavin says to continue. If you're a freshly-cleared PM reading this, stay in that hold state too until Gavin explicitly says go, even though you won't remember agreeing to it — this line is that agreement.
 
 Status of each session at the moment of the hold (re-check `ListAgents` yourself, this is a snapshot, not live):
-- **Engineer** (`personal-website-1d`) — idle. Finished all 3 M4 fix items (2 should-fix + 1 bundled nit), PM-verified by reading the code directly, lint/test/build clean. Flagged it has no browser tool to visually confirm; PM checked too, also none available. Not blocking — folded into the tester's queued M4 task instead of a special request. **Safe to clear.**
-- **Reviewer** (`personal-website-f5`) — idle. Already did the M4 review (2 should-fix found, both fixed by the engineer — see section 8) and was cleared+re-briefed once already today. **Safe to clear again if Gavin wants**, but there's a pending recheck it should do once PM comes off hold (of the 3 files the engineer just fixed) — that recheck hasn't been requested yet.
-- **Tester** (`personal-website-30`) — was still busy on the M0–M3 QA pass as of the last check. **Do not clear while busy** — re-check `ListAgents` before assuming it's finished.
+- **Engineer** (`personal-website-1d`) — idle. Finished all 3 M4 fix items, PM-verified. **Safe to clear**, but see "Next up" — it has 4 new bugs coming once Gavin says go.
+- **Reviewer** (`personal-website-f5`) — idle. Has a pending M4 recheck queued (not yet sent) once PM resumes. **Safe to clear.**
+- **Tester** (`personal-website-30`) — idle as of ~16:40, just reported its full M0–M3 findings (section 8a: **4 real bugs found**, PM independently confirmed 3 of them). Explicitly said it's ready for the M4 handoff. **Safe to clear**, but it's owed an acknowledgment + the M4 task once PM resumes.
 
 ## 3. Next up
 
-When Gavin says to resume: (1) send the reviewer a recheck request for the 3 files the engineer just fixed (`content.ts`, `ContactApp.tsx`, `ExperienceApp.tsx` — see section 8 for exactly what changed), (2) wait for the tester's M0–M3 report, then hand it the M4 task (already drafted in an earlier message to it — covers the education badge and aria-label fixes as part of normal M4 testing, no separate ask needed), (3) once both come back clean, ask Gavin for commit approval on all of M4.
+**PM found real, verified bugs while still on hold and has not acted on them yet** — this is a bigger decision point than a routine fix cycle, so PM is surfacing it to Gavin rather than assuming "resume" covers it. Once Gavin says go, the plan is: (1) send the 3 confirmed bugs (§8a #1–#3) to the engineer as fixes (severity: real UX breakage at phone widths, real a11y gap — worth prioritizing over starting M5); (2) ask whoever next has a real interactive browser (not headless) to confirm or rule out #4 before deciding if it's blocking; (3) send the reviewer a recheck of the M4 fix files (`content.ts`, `ContactApp.tsx`, `ExperienceApp.tsx`); (4) hand the tester the M4 task once the above settles down, so it isn't testing a target that's about to change again. **This plan is a PM recommendation, not yet approved** — confirm or redirect before any of it goes out.
 
 ---
 
@@ -251,6 +251,28 @@ Session `personal-website-1d` (live, parallel to this one) independently ran a h
 
 ### M0 — Scaffold — ✅ Done (pre-existing, committed `15e3c68`)
 Vite + React + TS + Tailwind v4 + Motion + FontAwesome + Inter + ESLint/Prettier + Vitest + `wrangler.jsonc`. Verified in this session: `npm install` initially failed (see Deviations #1), fixed, then lint/test/build all confirmed passing from a clean install.
+
+---
+
+## 8a. Tester's first QA pass — 4 real bugs found across M1/M2/M3 (2026-09-20, ~16:40)
+
+Tester (`personal-website-30`) ran the full M0–M3 dynamic pass assigned earlier: tested commit `638cc61` in an isolated git worktree (never touched the engineer's uncommitted M4 files), verified lint/test/build first, used `playwright-core` for dynamic testing, fully uninstalled it and removed the worktree afterward, 31 screenshots + repro scripts kept in `.qa/` (`tester-*` prefix). PM independently verified findings #1–#3 by reading the actual source (not just trusting the report); #4 could not be independently reproduced (no browser in this sandbox either) but PM traced a plausible root cause — see below.
+
+**#1 — Login screen clipped at 375/414px width. PM-confirmed.** `Hardware.tsx`'s screen box is `aspect-[16/10] w-full` — height is derived purely from width (`min(1100px, 92vw)`), with no regard for the login content's actual required height. At 375px this computes to roughly a 216px-tall box (tester measured ~197px in the real rendered layout, close enough given padding/border eaten from the CSS `%` box-sizing) against content that needs 350px+, so `overflow-hidden` clips the avatar button and part of the Login button. Mouse users effectively can't see/click Login at these widths; Enter still works since that listener isn't gated on visibility. Not present from 768px up; landscape at the same device widths is unaffected (plenty of width there).
+
+**#2 — Control Center panel overflows off the left edge at 375px (~41px) and marginally at 414px (~2px). PM-confirmed structurally.** `ControlCenter.tsx:52` is a fixed `w-64` (256px) panel `absolute right-0` against its trigger button. PM read `MenuBar.tsx` and found the button sits *before* the clock/date text in the right-hand flex group (`<ControlCenter /><span>clock</span>`), so it's well inboard of the viewport edge, not flush against it — there isn't 256px of room to its left at 375px. Visible effect: "Appearance"/"Brightness"/"Language" labels get truncated to "earance"/"htness"/"guage". Not present at 768px+.
+
+**#3 — Keyboard focus not blocked behind the Restart boot overlay. PM-confirmed via grep.** The overlay (`App.tsx:72`, `fixed inset-0 z-50`, fully opaque) blocks mouse interaction fine, but has no `aria-hidden`/`inert` on itself or the `Desktop` behind it, and PM confirmed via grep that no such attribute exists anywhere nearby. A keyboard user can Tab through and activate Control Center, all 5 dock icons, and the Logo menu while they're invisible behind the boot screen — a real violation of section 6's "ignore further input" during booting, specific to the keyboard modality (mouse users are protected by the opaque overlay).
+
+**#4 — Reproducible renderer crash under reduced motion (100% in headless Chrome, tester's own environment) — severity TBD, needs real-browser confirmation.** Repro: log in, open the Logo menu, click Log Out within ~150ms of the desktop first appearing (i.e. during the reduced-motion crossfade-in, before `zoomInComplete` fires). Waiting 500ms+ first does not crash. Tester isolated it to pure timing, not the click target, and explicitly flagged they could not verify this in a real interactive browser (headless-only sandbox) — asked for confirmation before ranking it higher, since it might be a headless/automation-only artifact.
+
+PM's independent trace of a plausible mechanism (from reading `App.tsx`, not from running it): under reduced motion, `<Desktop/>` renders live and interactive as a child of the fade-in `motion.div` *while `session.phase` is still `'zooming-in'`* — the phase only flips to `'desktop'` when `onAnimationComplete` fires ~250ms later. When it does, the JSX tree shape changes (`Desktop` moves from being wrapped in that `motion.div` to being a top-level sibling in a different conditional branch), which plausibly forces React to unmount and remount `Desktop`'s whole subtree. Interacting with `Desktop` (e.g. clicking a Logo menu item) in the ~150–250ms window means a click can be mid-flight against a subtree that's about to be torn down — a believable crash trigger independent of headless-vs-real, though PM agrees severity should wait on real-browser confirmation before treating it as a hard blocker. Root architectural concern regardless of crash-reproducibility: rendering live interactive content before the phase that's supposed to represent "on the desktop" has actually been reached is fragile by construction.
+
+**Nit (not blocking):** `LoginScreen`'s global `Enter` keydown listener stays mounted and fires during `'zooming-out'` too (the reduced-motion path remounts `LoginScreen` then) — harmless since the reducer's phase guard no-ops `LOGIN` outside `'landing'`, but technically not "ignored at the listener level." PM confirmed this matches the reducer guard exactly.
+
+**Everything else the tester checked came back clean** — state machine robustness (rapid clicks/Escape/Enter spam during every phase), preferences persistence + graceful degradation under a throwing/corrupted localStorage, full i18n correctness (no English leakage in VI mode anywhere), timezone/clock/date formatting, full keyboard-only login→desktop→menu→dialog flow, responsive layout at 768/1280/1440/1920 across all 4 theme×language combos, landscape at phone-ish sizes, and reduced-motion timing (boot ~1.53s vs. spec's ~1.5s, crossfade-out working correctly outside the #4 crash window).
+
+**Status:** PM is holding per Gavin's explicit request (section 2) — none of this has been sent to the engineer yet, and the tester has not yet been handed the M4 task it's waiting on. Awaiting Gavin's go-ahead.
 
 ---
 
