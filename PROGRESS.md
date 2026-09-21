@@ -74,9 +74,32 @@ When a session sees that warning:
 1. Gavin approved the commit — landed as `105592b` (M4) and `cabedfe` (3 §8a fixes), already on `origin/main`. Working tree confirmed clean.
 2. Gavin's call on §8a #4: accept as an unconfirmed, low-probability edge case, don't chase it further. Logged in section 4a.
 
-- **Engineer** (`personal-website-1d`) — idle, about to be assigned M5 (Mobile).
-- **Reviewer** (`personal-website-f5`) — idle, standing by for M5.
-- **Tester** (`personal-website-30`) — idle, standing by for M5.
+M5 (Mobile) assigned to the engineer ~19:20 — see section 3 for full scope. Engineer, reviewer, and tester all checked in after individual `/clear`s during this window and re-confirmed section 0a (the new usage-limit protocol below).
+
+### 🔴 PAUSED per §0a — engineer's session hit a usage-limit notice mid-M5 (2026-09-20, ~19:40)
+Engineer (`personal-website-1d`) followed the new protocol correctly: saw a usage-limit notice (the harness reported it as already reset and told the session to continue), flagged it to the PM, and **held rather than resuming on its own** — waiting for an explicit go-ahead per section 0a's letter ("resuming only when Gavin says to continue"), even though the harness itself said it was clear to proceed. PM is not unilaterally waving this through — surfacing to Gavin now (see section 3) since he's the one who set that rule.
+
+**M5 state as reported (all uncommitted/unstaged on disk, git status independently confirmed by PM, nothing lost):**
+
+*Done:*
+- `src/hooks/useIsMobile.ts` — `matchMedia` hook, `(max-width: 767px)`.
+- `src/config/apps.ts` — extracted `APP_ICONS` (id/icon/gradient) out of `Dock.tsx` so Dock and the new mobile grid share one source.
+- `src/components/apps/registry.ts` — extracted the lazy `APP_COMPONENTS` map out of `Desktop.tsx` so `Window` and the new `AppSheet` share one source.
+- `ControlCenter.tsx` — mobile-aware: shared fieldset controls pulled into a local `ControlCenterFields`, `isMobile` branch renders a bottom-sheet panel instead of the desktop top-right dropdown. Desktop behavior/markup unchanged.
+- `src/components/mobile/AppSheet.tsx` (new) — full-screen modal sheet, slide-up/down via Motion, header + close button, focus-trapped, Escape closes, reuses `APP_COMPONENTS`.
+- `src/components/mobile/HomeScreen.tsx` (new) — wallpaper + status strip (clock + `ControlCenter`) + 3-col grid of the same 5 `APP_ICONS`, opens `AppSheet` on tap, restores focus to the tapped icon on close.
+- `App.tsx` — extracted `RestartBootGate` (the empirically-verified §8a #3 inert/overlay-timing fix, previously inlined in `Experience`) so both desktop `Experience` and new `MobileExperience` share the exact same mechanism rather than a second copy. Added `MobileExperience` (no Hardware frame, no zoom — plain cross-fade, same treatment as the existing reduced-motion path) and a `Root` component switching `Experience`/`MobileExperience` via `useIsMobile()`.
+- `AboutApp.tsx`, `SkillsApp.tsx` — reflowed: sidebar nav becomes a horizontal top segmented/scrollable list under `isMobile`, desktop path untouched.
+- `ContactApp.tsx` — import added, reflow edit was **mid-edit, not yet applied** when the notice landed.
+
+*Not started:*
+- Finish `ContactApp.tsx` reflow (same pattern as Skills/About).
+- `ProjectsApp.tsx` reflow (filter sidebar → top segmented control).
+- `ExperienceApp.tsx` — engineer expects no change needed (already single-column).
+- lint/test/build.
+- Real dynamic check at 375/414px, both themes, both languages, landscape, reduced motion.
+
+**Reviewer/tester status:** both checked in idle, correctly told to keep standing by — nothing handed to either yet, M5 isn't done.
 
 ### Tester's M4 + retest pass — 1 bug reopened, everything else clean (2026-09-20, ~18:10)
 Tester (`personal-website-30`) ran with headless Chromium again (temp-installed `playwright-core`, fully uninstalled after, confirmed via `npm uninstall` + grep — same clean process as its first pass). 43 screenshots + 5 repro scripts in `.qa/` (`tester-m4-*`/`tester-retest*` prefix), nothing deleted. Confirmed no real (non-headless) browser access in its sandbox either — did not re-attempt §8a #4 (correctly avoided submitting a second headless data point).
@@ -119,12 +142,14 @@ Reviewer checked all 5 app files (not just the 3 named), confirmed the 4 aria-la
 
 ## 3. Next up
 
-**M5 — Mobile** (PROJECT_BRIEF.md section 7.9 + section 12), about to be assigned to the engineer:
+**Blocked on Gavin (2026-09-20, ~19:40): does the engineer resume M5 now?** Its session hit a usage-limit notice; the harness itself reported the limit already reset and told the session to continue, but per section 0a's literal rule ("resuming only when Gavin says to continue") the engineer held rather than resuming on its own, and the PM isn't overriding that on its own authority since it's Gavin's rule to begin with. Full in-flight state is captured in section 2 — nothing is at risk of being lost either way. Once you say go, the PM tells the engineer to pick back up exactly where it left off (finish `ContactApp.tsx`, then `ProjectsApp.tsx`, then lint/test/build + dynamic check).
+
+**M5 — Mobile** (PROJECT_BRIEF.md section 7.9 + section 12) — scope, for reference:
 - Landing: full-screen login screen under 768px, no hardware frame, same info/Login button as desktop.
 - After boot: home screen — wallpaper, top status strip (live clock + Control Center icon), grid of 5 large rounded app icons with labels.
 - App open: full-screen sheet slides up, header with title + close button, content reflows to a single column (sidebars → top segmented control or list).
 - Control Center: same functionality (appearance, brightness, language), mobile-appropriate presentation.
-- Accept: fully usable at 375px and 414px widths, no horizontal scroll, landscape doesn't break — reuse the existing session/preferences state, `content.ts`, and `useIsMobile` hook slot already planned in the file layout.
+- Accept: fully usable at 375px and 414px widths, no horizontal scroll, landscape doesn't break.
 
 Once the engineer delivers, same protocol as M1–M4: PM sanity pass → reviewer + tester in parallel → triage → Gavin for commit approval.
 
