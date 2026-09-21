@@ -68,3 +68,16 @@ Once everyone's up, the PM runs `ListAgents`, updates the "Current mapping" tabl
 - If you deviate from a locked decision (e.g. a dependency version conflict forces a downgrade), log it in `PROGRESS.md` section 5 with the reason and a condition for revisiting it, and say so to Gavin directly — don't bury it in a code comment only.
 - All user-facing strings live in `src/data/content.ts` (the `Localized<T>` i18n layer). No hardcoded English or Vietnamese text inside components.
 - Never use Apple assets, names, or artwork (see `PROJECT_BRIEF.md` section 5).
+
+## Token & credit efficiency
+
+Gavin asked (2026-09-20) for every session on this repo to work token/credit-efficiently. Priority order: **correctness → task completion → efficiency → polish** — never cut real verification on risky changes (security, destructive ops, data/state migrations, auth) to save tokens; do cut it on low-risk, already-verified work.
+
+Applied here, concretely:
+- Read only what the task needs — targeted search/grep over full-file or full-repo reads; don't reread a file you haven't changed since your last read.
+- Use `PROGRESS.md`/`PROJECT_BRIEF.md` as source of truth instead of re-deriving project state from scratch each session.
+- Prefer the smallest safe diff. No unrelated refactors, no speculative abstractions, no "while I'm here" cleanup outside the task's scope — flag it instead of fixing it.
+- Don't run the full `lint && test && build` chain when a focused check answers the question; do run the full chain before marking a milestone status, per the Working rules above.
+- Keep `PROGRESS.md` entries factual and no longer than they need to be to let a cold session resume correctly — this file's job is reliable handoff, not a full transcript. Don't restate context already established earlier in the same file.
+- Keep chat responses concise: state what changed, what was verified, and what's next — skip narrating obvious steps or re-explaining background the file already has.
+- **Standing open question, not yet resolved:** this repo's PM/engineer/reviewer/tester model (see the restart guide above and `PROGRESS.md` §0) leans on deliberate redundancy — the PM independently re-reads diffs and re-runs lint/test/build after the engineer already did, multi-round re-verification after reviewer/tester findings, etc. That's real token cost this efficiency guidance argues against, but it's also core to how this specific team model catches things a single pass misses (see `PROGRESS.md`'s §8 log for cases where a "clean" first pass wasn't). Don't unilaterally gut that redundancy — check `PROGRESS.md` for whether/how Gavin has resolved this tension before treating either the old thorough-recheck habit or a leaner trust-the-peer's-report habit as current policy.
