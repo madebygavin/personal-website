@@ -34,3 +34,10 @@ coverage
 # but kept on disk (not deleted) so a verification claim stays auditable
 # within a session. See PROGRESS.md section 0/9.
 .qa/
+
+# Claude Code process/instruction files — local only per Gavin (2026-09-21).
+# Stay on disk for every session to read; just not pushed to GitHub anymore.
+# PROJECT_BRIEF.md (the product spec) stays tracked/public — Gavin's call.
+CLAUDE.md
+PROGRESS.md
+gavinle_site_content.md
