@@ -159,37 +159,45 @@ export interface ExperienceEntry {
   highlights: Localized<string>[]
 }
 
-// TODO(gavin): replace with your real roles, dates, and education.
+// Work history is real (from LinkedIn); Food Server excluded per Gavin's call.
 export const experienceEntries: ExperienceEntry[] = [
   {
     id: 'role-1',
     kind: 'work',
-    period: { en: '2023 — Present', vi: '2023 — Hiện tại' },
+    period: { en: '2021 — Present', vi: '2021 — Hiện tại' },
     role: { en: 'Software Developer', vi: 'Lập trình viên phần mềm' },
-    org: 'Acme Corp',
+    org: 'Tenex Software Solutions, Inc.',
     highlights: [
-      { en: 'Placeholder highlight about a shipped feature.', vi: 'Điểm nhấn placeholder về một tính năng đã triển khai.' },
-      { en: 'Placeholder highlight about improving performance.', vi: 'Điểm nhấn placeholder về việc cải thiện hiệu năng.' },
+      {
+        en: 'Updated legacy codebases to modern development standards, improving functionality.',
+        vi: 'Cập nhật mã nguồn cũ lên các tiêu chuẩn phát triển hiện đại, giúp cải thiện chức năng hoạt động.',
+      },
     ],
   },
   {
     id: 'role-2',
     kind: 'work',
-    period: { en: '2021 — 2023', vi: '2021 — 2023' },
-    role: { en: 'Frontend Developer', vi: 'Lập trình viên Frontend' },
-    org: 'Globex Solutions',
+    period: { en: '2020', vi: '2020' },
+    role: { en: 'Software Engineer Intern', vi: 'Thực tập sinh Kỹ sư phần mềm' },
+    org: 'Tenex Software Solutions, Inc.',
     highlights: [
-      { en: 'Placeholder highlight about a UI rebuild.', vi: 'Điểm nhấn placeholder về việc xây dựng lại giao diện.' },
-      { en: 'Placeholder highlight about mentoring teammates.', vi: 'Điểm nhấn placeholder về việc hướng dẫn đồng nghiệp.' },
+      { en: 'Coded, tested, and fixed programming errors.', vi: 'Viết mã, kiểm thử và sửa lỗi lập trình.' },
+      { en: 'Documented application process flows.', vi: 'Lập tài liệu mô tả luồng xử lý của ứng dụng.' },
     ],
   },
   {
     id: 'role-3',
     kind: 'work',
-    period: { en: '2019 — 2021', vi: '2019 — 2021' },
-    role: { en: 'Junior Developer', vi: 'Lập trình viên mới vào nghề' },
-    org: 'Initech Labs',
-    highlights: [{ en: 'Placeholder highlight about an early project.', vi: 'Điểm nhấn placeholder về một dự án ban đầu.' }],
+    period: { en: '2013 — 2020', vi: '2013 — 2020' },
+    role: { en: 'Computer Technician', vi: 'Kỹ thuật viên máy tính' },
+    org: 'Self-employed',
+    highlights: [
+      { en: 'Built custom computers to customer specifications.', vi: 'Lắp ráp máy tính theo yêu cầu riêng của khách hàng.' },
+      {
+        en: 'Disassembled computers to diagnose and examine parts.',
+        vi: 'Tháo rời máy tính để chẩn đoán và kiểm tra linh kiện.',
+      },
+    ],
   },
   {
     id: 'education-1',
@@ -218,54 +226,52 @@ export interface Project {
   links: ProjectLink[]
 }
 
-// TODO(gavin): replace with your real projects, links, and screenshots.
+// Real projects (from gavinle.com / Gavin's GitHub). "Operating-System-Project1"
+// deliberately excluded — an earlier, less-complete draft of syscall-benchmark.
 export const projects: Project[] = [
   {
-    id: 'project-one',
-    name: 'Project Name One',
+    id: 'portfolio-site',
+    name: 'Personal Portfolio Website',
     category: 'web',
     summary: {
-      en: 'Placeholder description of a web project — what it does and why it exists.',
-      vi: 'Mô tả placeholder cho một dự án web — dự án làm gì và vì sao nó tồn tại.',
+      en: 'A macOS-inspired portfolio with real window management, a dock, Control Center, bilingual content, and full keyboard/accessibility support.',
+      vi: 'Một trang portfolio lấy cảm hứng từ macOS với hệ thống quản lý cửa sổ thực thụ, dock, Trung tâm điều khiển, nội dung song ngữ và hỗ trợ đầy đủ cho bàn phím cũng như khả năng tiếp cận.',
     },
-    tech: ['React', 'TypeScript', 'Tailwind CSS'],
-    links: [
-      { label: { en: 'Live demo', vi: 'Bản demo' }, url: 'https://example.com' },
-      { label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/gavin-example/project-one' },
-    ],
+    tech: ['React', 'TypeScript', 'Tailwind CSS', 'Motion', 'Vite'],
+    links: [],
   },
   {
-    id: 'project-two',
-    name: 'Project Name Two',
-    category: 'web',
-    summary: {
-      en: 'Placeholder description of another web project, focused on a different problem.',
-      vi: 'Mô tả placeholder cho một dự án web khác, tập trung vào một vấn đề khác.',
-    },
-    tech: ['Next.js', 'Node.js', 'PostgreSQL'],
-    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/gavin-example/project-two' }],
-  },
-  {
-    id: 'project-three',
-    name: 'CLI Tool Name',
+    id: 'syscall-benchmark',
+    name: 'Syscall & Context-Switch Benchmark',
     category: 'tools',
     summary: {
-      en: 'Placeholder description of a command-line tool that automates something tedious.',
-      vi: 'Mô tả placeholder cho một công cụ dòng lệnh giúp tự động hoá việc gì đó nhàm chán.',
+      en: 'A C benchmarking tool for Linux that measures the real overhead of a system call and of a context switch — timing repeated syscalls with gettimeofday, and forcing a context switch between two processes via pipe and fork.',
+      vi: 'Một công cụ đo hiệu năng viết bằng C cho Linux, đo chi phí thực tế của một lệnh gọi hệ thống (system call) và của một lần chuyển ngữ cảnh (context switch) — tính thời gian các syscall lặp lại bằng gettimeofday, và ép buộc chuyển ngữ cảnh giữa hai tiến trình thông qua pipe và fork.',
     },
-    tech: ['Go'],
-    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/gavin-example/cli-tool' }],
+    tech: ['C', 'Linux', 'POSIX'],
+    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/madebygavin/OS-Project-1' }],
   },
   {
-    id: 'project-four',
-    name: 'Browser Extension Name',
+    id: 'memory-simulator',
+    name: 'Virtual Memory Simulator',
     category: 'tools',
     summary: {
-      en: 'Placeholder description of a small browser extension built for a personal workflow.',
-      vi: 'Mô tả placeholder cho một tiện ích trình duyệt nhỏ phục vụ quy trình làm việc cá nhân.',
+      en: 'A C simulator that models four page-replacement policies — LRU, FIFO, Random, and a two-partition VMS scheme — against real memory-access trace files, reporting hit rate and disk I/O for each algorithm.',
+      vi: 'Một trình mô phỏng viết bằng C, mô hình hoá bốn chính sách thay thế trang (page-replacement) — LRU, FIFO, Random và một cơ chế VMS hai phân vùng — trên các tệp trace truy cập bộ nhớ thực tế, báo cáo tỷ lệ hit và số lần I/O đĩa cho mỗi thuật toán.',
     },
-    tech: ['TypeScript'],
-    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/gavin-example/extension' }],
+    tech: ['C', 'Memory Management'],
+    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/madebygavin/OS-Project-2' }],
+  },
+  {
+    id: 'robot-lab',
+    name: 'Raspberry Pi Robot Control',
+    category: 'tools',
+    summary: {
+      en: 'Python control software for a two-wheel Raspberry Pi robot — PWM servo control, wheel-encoder tick counting for speed calibration, and velocity commands in real-world units (inches/sec, rotations/sec).',
+      vi: 'Phần mềm điều khiển viết bằng Python cho robot hai bánh chạy trên Raspberry Pi — điều khiển servo bằng PWM, đếm tick từ encoder bánh xe để hiệu chỉnh tốc độ, và ra lệnh vận tốc theo đơn vị thực tế (inch/giây, vòng/giây).',
+    },
+    tech: ['Python', 'Raspberry Pi'],
+    links: [{ label: { en: 'Source code', vi: 'Mã nguồn' }, url: 'https://github.com/madebygavin/RobotLab' }],
   },
 ]
 

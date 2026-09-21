@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { BRAND } from '../../config/brand'
+import { BrandMark } from '../shared/BrandMark'
 import { useLang } from '../../hooks/useLang'
 import { useSession } from '../../state/session'
 import { uiStrings } from '../../data/content'
@@ -70,9 +69,9 @@ export function LogoMenu() {
         aria-expanded={open}
         aria-label={t(uiStrings.logoMenuLabel)}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-5 w-5 items-center justify-center rounded-full text-sm transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+        className="flex items-center justify-center rounded-[6px] transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
       >
-        <FontAwesomeIcon icon={BRAND.logoIcon} />
+        <BrandMark size={20} />
       </button>
 
       {open && (

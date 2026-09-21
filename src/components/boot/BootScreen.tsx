@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { animate, motion, useMotionValue, useTransform } from 'motion/react'
-import { BRAND } from '../../config/brand'
+import { BrandMark } from '../shared/BrandMark'
 import { useLang } from '../../hooks/useLang'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { uiStrings } from '../../data/content'
@@ -42,7 +41,7 @@ export function BootScreen({ onComplete }: BootScreenProps) {
       aria-label={t(uiStrings.loading)}
       className="flex h-full w-full flex-col items-center justify-center gap-6 bg-black text-white"
     >
-      <FontAwesomeIcon icon={BRAND.logoIcon} className="text-4xl opacity-90" />
+      <BrandMark size={72} className="opacity-90" />
       <div className="h-1.5 w-40 overflow-hidden rounded-full bg-white/15">
         <motion.div className="h-full origin-left rounded-full bg-white" style={{ scaleX }} />
       </div>

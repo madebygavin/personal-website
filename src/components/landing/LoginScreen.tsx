@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import avatarUrl from '../../assets/avatar.webp'
 import { useClock } from '../../hooks/useClock'
 import { useLang } from '../../hooks/useLang'
 import { formatClock, formatDate } from '../../utils/format'
@@ -30,9 +29,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         type="button"
         onClick={onLogin}
         aria-label={t(uiStrings.login)}
-        className="flex h-20 w-20 items-center justify-center rounded-full bg-white/10 text-3xl ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] sm:h-24 sm:w-24 sm:text-4xl"
+        className="h-20 w-20 overflow-hidden rounded-full transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] sm:h-24 sm:w-24"
       >
-        <FontAwesomeIcon icon={faUser} />
+        <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
       </button>
 
       <div className="text-lg font-semibold">{profile.name}</div>
