@@ -42,7 +42,7 @@ When a session sees that warning:
 **Task protocol:**
 1. PM assigns a task to the engineer via `SendMessage`: scope, relevant `PROJECT_BRIEF.md` sections, and anything needed from current `PROGRESS.md` state.
 2. Engineer works, verifies, and messages the PM back — no commit, no tracker edits.
-3. PM does a light sanity pass itself (re-runs lint/test/build, skims the diff for anything glaring) — not a full review or test pass.
+3. PM does a light sanity pass — trusts a clean self-report by default (per CLAUDE.md's token-efficiency section, resolved 2026-09-20), re-running lint/test/build or reading the diff in full only when something looks risky (shared/core logic, a past bug's area, anything the report hedges on). Not a full review or test pass either way.
 4. PM hands the same completed work to the reviewer (static review) and the tester (dynamic/behavioral testing) — these can run in parallel. Both report findings back to the PM only.
 5. PM triages all findings from both: sends required fixes back to the engineer (loop back to step 2), or — if clean, or findings are minor/deferred — updates `PROGRESS.md` and asks Gavin for commit approval.
 6. If any session disappears mid-task (Gavin closes it, etc.), PM tells Gavin rather than silently waiting or absorbing the work itself.
