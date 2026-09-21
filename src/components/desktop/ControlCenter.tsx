@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSliders } from '@fortawesome/free-solid-svg-icons'
@@ -19,15 +19,34 @@ export function ControlCenter() {
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  // Only relevant on mobile, where the panel is portaled out to document.body
-  // (see the `isMobile` branch below) — unused, and harmless as an always-null
-  // ref, on desktop.
-  const mobilePanelRef = useRef<HTMLDivElement>(null)
+  // Both the mobile bottom sheet and the desktop dropdown are portaled to
+  // document.body (see the two branches below) — this tracks whichever one
+  // is actually mounted, so it's shared rather than one ref per branch.
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [desktopPosition, setDesktopPosition] = useState<{ top: number; right: number } | null>(null)
 
   // Explicit close (Escape): returns focus to the trigger. Kept distinct
   // from the popover hook's dismiss, which must NOT refocus — see
   // useDismissablePopover.
-  const containerRef = useDismissablePopover<HTMLDivElement>(open, () => setOpen(false), mobilePanelRef)
+  const containerRef = useDismissablePopover<HTMLDivElement>(open, () => setOpen(false), panelRef)
+
+  // Anchors the desktop panel to the trigger button's actual on-screen
+  // position, computed fresh from getBoundingClientRect, rather than assuming
+  // MenuBar's exact height/width (the previous `fixed right-3 top-8` was
+  // only correct by coincidence — see PROGRESS.md section 8, M3 review).
+  // Recomputed on open and on resize, since a portaled `fixed` panel doesn't
+  // move with the trigger the way an inline sibling would.
+  useLayoutEffect(() => {
+    if (!open || isMobile) return
+    function updatePosition() {
+      const rect = buttonRef.current?.getBoundingClientRect()
+      if (!rect) return
+      setDesktopPosition({ top: rect.bottom + 8, right: window.innerWidth - rect.right })
+    }
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    return () => window.removeEventListener('resize', updatePosition)
+  }, [open, isMobile])
 
   useEffect(() => {
     if (!open) return
@@ -41,23 +60,21 @@ export function ControlCenter() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [open])
 
-  // Mobile-only: the portaled panel is appended at the end of <body>, no
-  // longer DOM-adjacent to the trigger, so a plain Tab from the trigger would
-  // land on whatever's next in the *original* tree (the home screen's icon
-  // grid) instead of the panel — found by the tester at 375×812, reproducible
-  // every time. Moving focus into the panel's first control on open (same
-  // pattern AppSheet/AboutDialog use) sidesteps the mismatch entirely: the
-  // user is already inside the panel, so subsequent Tabs walk its own
-  // (DOM-contiguous) controls rather than depending on where the portal
-  // happens to sit in the wider document. Desktop's panel is untouched — it's
-  // DOM-adjacent to its trigger already, so this isn't needed there.
+  // Both panels are portaled to the end of <body>, no longer DOM-adjacent to
+  // the trigger, so a plain Tab from the trigger would land on whatever's
+  // next in the *original* tree instead of the panel — found by the tester
+  // on mobile at 375×812, reproducible every time; the same mismatch applies
+  // to the desktop dropdown now that it's portaled too. Moving focus into the
+  // panel's first control on open (same pattern AppSheet/AboutDialog use)
+  // sidesteps it entirely: the user is already inside the panel, so
+  // subsequent Tabs walk its own (DOM-contiguous) controls.
   useEffect(() => {
-    if (!open || !isMobile) return
-    const firstControl = mobilePanelRef.current?.querySelector<HTMLElement>(
+    if (!open) return
+    const firstControl = panelRef.current?.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     )
     firstControl?.focus()
-  }, [open, isMobile])
+  }, [open])
 
   return (
     <div ref={containerRef} className="relative">
@@ -91,12 +108,12 @@ export function ControlCenter() {
           // inline, `bottom-4` resolved against the strip's ~48px box instead
           // of the viewport, pushing most of the panel off-screen above the
           // top (found by the tester at 375×812 — Light/brightness/language
-          // controls were physically unreachable). `mobilePanelRef` is handed
-          // to useDismissablePopover as its `extraContainerRef` so outside-
+          // controls were physically unreachable). `panelRef` is handed to
+          // useDismissablePopover as its `extraContainerRef` so outside-
           // click/focusout dismissal still treats this now-detached subtree
           // as "inside" the popover.
           <div
-            ref={mobilePanelRef}
+            ref={panelRef}
             className="glass-panel fixed inset-x-3 bottom-4 z-50 rounded-[var(--radius-window)] p-4 text-sm"
           >
             <ControlCenterFields
@@ -111,26 +128,36 @@ export function ControlCenter() {
           document.body,
         )}
 
-      {open && !isMobile && (
-        // Fixed to the viewport edge rather than the trigger button so the
-        // panel can't overflow off-screen at narrow widths (the trigger sits
-        // inboard of the right edge, so `absolute right-0` on the button
-        // doesn't leave room for a 256px panel below ~430px). This is only
-        // correct because MenuBar is `fixed inset-x-0 top-0 h-7` — its edges
-        // coincide with the viewport's. If MenuBar's positioning, height, or
-        // full-width-ness ever changes, these values (right-3 top-8) need to
-        // change with it; they are not independently correct.
-        <div className="glass-panel fixed right-3 top-8 w-64 rounded-[var(--radius-window)] p-4 text-sm">
-          <ControlCenterFields
-            theme={theme}
-            setTheme={setTheme}
-            brightness={brightness}
-            setBrightness={setBrightness}
-            lang={lang}
-            setLang={setLang}
-          />
-        </div>
-      )}
+      {open &&
+        !isMobile &&
+        desktopPosition &&
+        createPortal(
+          // Portaled to document.body and positioned from the trigger's own
+          // getBoundingClientRect (see the layout effect above), rather than
+          // rendered inline with a `fixed right-3 top-8` guess — that guess
+          // was only correct as long as MenuBar stayed exactly `fixed
+          // inset-x-0 top-0 h-7` (see PROGRESS.md section 8, M3 review). This
+          // is now anchored to the button's real position, so it stays
+          // correct regardless of MenuBar's geometry. `panelRef` is handed to
+          // useDismissablePopover as its `extraContainerRef`, same as the
+          // mobile sheet above, so outside-click/focusout dismissal still
+          // treats this detached subtree as "inside" the popover.
+          <div
+            ref={panelRef}
+            style={{ top: desktopPosition.top, right: desktopPosition.right }}
+            className="glass-panel fixed z-50 w-64 rounded-[var(--radius-window)] p-4 text-sm"
+          >
+            <ControlCenterFields
+              theme={theme}
+              setTheme={setTheme}
+              brightness={brightness}
+              setBrightness={setBrightness}
+              lang={lang}
+              setLang={setLang}
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

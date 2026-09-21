@@ -9,11 +9,12 @@ import { useEffect, useRef, type RefObject } from 'react'
 // there (see LogoMenu/ControlCenter).
 //
 // `extraContainerRef` is for a panel that's portaled outside `containerRef`'s
-// DOM subtree (ControlCenter's mobile bottom sheet, portaled to escape a
-// `backdrop-filter` ancestor's fixed-position containing block) — without
-// it, a portaled panel's own clicks/focus would look "outside" and
-// self-dismiss immediately. Omit it when trigger and panel share one
-// subtree (LogoMenu, ControlCenter's desktop panel).
+// DOM subtree — ControlCenter's mobile bottom sheet and desktop dropdown are
+// both portaled (the former to escape a `backdrop-filter` ancestor's
+// fixed-position containing block, the latter to anchor off the trigger's
+// real on-screen position instead of an assumed one) — without it, a
+// portaled panel's own clicks/focus would look "outside" and self-dismiss
+// immediately. Omit it when trigger and panel share one subtree (LogoMenu).
 export function useDismissablePopover<T extends HTMLElement>(
   open: boolean,
   onDismiss: () => void,

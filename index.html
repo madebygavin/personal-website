@@ -4,9 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gavin — Software Developer</title>
+    <!-- No real favicon file yet (section 16, open item #3: final logo not
+         chosen) — an empty data URI suppresses the browser's automatic
+         /favicon.ico request, which otherwise 404s and violates section 10's
+         "no console errors in production build" bar. Swap for a real icon
+         once the logo is decided. -->
+    <link rel="icon" href="data:," />
+    <!-- TODO(gavin): revisit description/OG copy once real bio content and a
+         final domain (section 16, open items #2/#4) are settled. -->
+    <meta name="description" content="Gavin — Software Developer. A personal portfolio site." />
+    <meta property="og:title" content="Gavin — Software Developer" />
+    <meta property="og:description" content="A personal portfolio site." />
+    <meta property="og:type" content="website" />
   </head>
   <body>
     <div id="root"></div>
+    <!-- No Localized<T> here: main.tsx (and content.ts) only load once JS
+         runs, so this can't route through the app's i18n layer. Static
+         bilingual text is the exception CLAUDE.md's i18n rule implies for
+         content that must render without JS. Per PROJECT_BRIEF.md section 3,
+         gap #17, this fallback carries name, title, and contact links — the
+         values below are copied from `profile`/`contactInfo` in
+         src/data/content.ts; if Gavin updates those (they're still
+         TODO(gavin) placeholders for the contact links), update here too. -->
+    <noscript>
+      <div style="padding: 2rem; font-family: sans-serif; max-width: 32rem; margin: 0 auto; text-align: center">
+        <p><strong>Gavin</strong> — Software Developer / Lập trình viên phần mềm</p>
+        <p>
+          This site requires JavaScript to run — you can still reach me here:<br />
+          Trang này cần JavaScript để hoạt động — bạn vẫn có thể liên hệ tại đây:
+        </p>
+        <p>
+          <a href="mailto:gavin@example.com">gavin@example.com</a> ·
+          <a href="https://www.linkedin.com/in/gavin-example">LinkedIn</a> ·
+          <a href="https://github.com/gavin-example">GitHub</a>
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

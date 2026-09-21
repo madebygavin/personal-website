@@ -45,9 +45,16 @@ export function SkillsApp() {
             <li key={skill.name}>
               <div className="mb-1 flex items-center justify-between">
                 <span>{skill.name}</span>
-                <span className="text-xs opacity-60">{skill.level}%</span>
+                <span className="text-xs opacity-70">{skill.level}%</span>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/10">
+              <div
+                role="progressbar"
+                aria-label={skill.name}
+                aria-valuenow={skill.level}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                className="h-1.5 w-full overflow-hidden rounded-full bg-black/10"
+              >
                 <div className="h-full rounded-full bg-[var(--color-accent)]" style={{ width: `${skill.level}%` }} />
               </div>
             </li>

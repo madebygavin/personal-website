@@ -68,7 +68,7 @@ export function AppSheet({ appId, onClose }: AppSheetProps) {
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
         <Suspense
-          fallback={<div className="flex h-full items-center justify-center text-sm opacity-60">{t(uiStrings.loading)}</div>}
+          fallback={<div className="flex h-full items-center justify-center text-sm opacity-70">{t(uiStrings.loading)}</div>}
         >
           <ActiveAppComponent />
         </Suspense>

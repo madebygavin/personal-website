@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { motion, useDragControls } from 'motion/react'
 import { useLang } from '../../hooks/useLang'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
@@ -21,6 +21,7 @@ export function Window({ title, constraintsRef, onClose, children }: WindowProps
   const reducedMotion = useReducedMotion()
   const dragControls = useDragControls()
   const windowRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
   // Confirmed via an isolated repro: a motion.div that both scales in on
   // mount (initial/animate scale) AND has dragConstraints resolves the
   // constraint box against the wrong (pre-settle) scale, letting drag push
@@ -36,8 +37,8 @@ export function Window({ title, constraintsRef, onClose, children }: WindowProps
   return (
     <motion.div
       ref={windowRef}
-      role="region"
-      aria-label={title}
+      role="dialog"
+      aria-labelledby={titleId}
       tabIndex={-1}
       onKeyDown={(event) => {
         if (event.key === 'Escape') onClose()
@@ -80,7 +81,9 @@ export function Window({ title, constraintsRef, onClose, children }: WindowProps
             className="h-3 w-3 cursor-default rounded-full bg-[#28c840] opacity-40"
           />
         </div>
-        <span className="text-xs font-semibold">{title}</span>
+        <span id={titleId} className="text-xs font-semibold">
+          {title}
+        </span>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">{children}</div>
     </motion.div>

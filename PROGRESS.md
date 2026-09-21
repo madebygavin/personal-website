@@ -1,6 +1,6 @@
 # Progress Tracker
 
-**Last updated:** 2026-09-20 ~19:15 by Claude (Sonnet 5), session `personal-website-b5`
+**Last updated:** 2026-09-21 by Claude (Sonnet 5), session `personal-website-fa` (PM) — M6 shipped and committed; content/UI polish pass (old-site content reuse, skill icons, desktop widget) queued next.
 **Read this file first**, before `PROJECT_BRIEF.md`, at the start of any session. `PROJECT_BRIEF.md` is the spec (binding, changes rarely). This file is the log (changes every session) — it tells you where things actually stand right now, including things the brief can't know: what's verified, what's deviated, what's blocked, and **which session is doing what**.
 
 Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not** visually verified · 🔵 In progress · ⬜ Not started · 🔴 Blocked
@@ -23,10 +23,10 @@ This repo is currently run with a **PM / engineer / reviewer / tester split** ac
 **Workflow, superseded 2026-09-20 evening (Gavin's call):** previously the reviewer only reviewed once the PM explicitly flagged a task ready, and reported findings to the PM who then relayed them to the engineer. Now the engineer↔reviewer loop is direct and exclusive of the PM until it's clean — this cuts the PM out of an extra relay hop for code-review iteration, since that back-and-forth doesn't need PM judgment calls the way tester-finding triage does. The tester stage is unchanged: PM still gates it and still triages its findings, since those are genuine PM-level calls (required fix vs. deferred/minor, same as always).
 
 **Current mapping** (session names are assigned by the harness and will change if a session restarts — check `ListAgents` and update this line, don't assume the names below stay valid):
-- PM: `personal-website-b5`
-- Engineer: `personal-website-1d`
-- Reviewer: `personal-website-f5` (Gavin restarted the reviewer session at ~13:05 after `personal-website-ad` hit a cross-session messaging issue and couldn't reach the PM — see section 8. `personal-website-f5` has no memory of `-ad`'s in-progress M3 review; it was re-briefed and re-tasked from scratch.)
-- Tester: `personal-website-30` (joined ~13:45)
+- PM: `personal-website-fa` (2026-09-21, after a reboot — no memory of prior sessions' conversations, but nothing was lost since it's all captured in this file)
+- Engineer: `personal-website-a4`
+- Reviewer: `personal-website-dc`
+- Tester: `personal-website-52`
 
 **If you're a new session picking this up:** run `ListAgents`. If a PM session is live, message it and wait for a task rather than starting independent work — it's tracking state you don't have. If no PM is live (Gavin only has one session open), there's no split in effect right now; work normally per section 9's rules and update this file yourself.
 
@@ -62,83 +62,138 @@ When a session hits that threshold:
 | M3 | Desktop shell | ✅ Done — §8a #2 fixed, dynamically re-verified | ✅ | ✅ | ✅ | ✅ fix confirmed via measured panel bounds at 375/414px |
 | M4 | Window system & apps | ✅ Done — reviewer + tester both clean on a full pass | ✅ | ✅ | ✅ | ✅ full dynamic pass done, nothing outstanding |
 | M5 | Mobile | ✅ Done — reviewer + tester both clean (2 rounds on the CC bug) | ✅ | ✅ | ✅ | ✅ full dynamic pass + targeted re-tests, nothing outstanding |
-| M6 | Polish, a11y, perf | ⬜ Not started | — | — | — | — |
+| M6 | Polish, a11y, perf | ✅ Done — reviewer + tester clean, remaining opens (theme/hardware, Lighthouse) resolved by Gavin's decision, not fixes | ✅ | ✅ | ✅ | ✅ confirmed dynamically incl. real contrast math; Lighthouse score itself accepted as an unmeasured gap (§4a #3) |
 | M7 | Deployment | ⬜ Not started | — | — | — | — |
 
 **Update 2026-09-20 ~19:00:** all 3 confirmed §8a regressions (M1 login clipping, M3 Control Center overflow, M2 keyboard-focus-behind-restart-overlay) are now fixed and dynamically re-verified — the M2 fix took 3 rounds because the first two "fixes" looked correct under careful static review by both the PM and the reviewer, but only the tester's live, timing-based repro caught that they weren't. M4 is fully clean (review + dynamic).
 
-**Update 2026-09-20 ~19:15:** Gavin approved the commit — the batch (3 §8a fixes + M4) is landed as `105592b` (M4) and `cabedfe` (the 3 fixes), pushed to `origin/main`. Gavin also disposed of §8a #4: accept it as an unconfirmed, low-probability edge case and move on rather than chase it further (see section 4a). M5 (Mobile) is next — see section 3.
+**Update 2026-09-20 ~19:15:** Gavin approved the commit — the batch (3 §8a fixes + M4) is landed as `105592b` (M4) and `cabedfe` (the 3 fixes), pushed to `origin/main`. Gavin also disposed of §8a #4: accept it as an unconfirmed, low-probability edge case and move on rather than chase it further (see section 4a).
+
+**Update 2026-09-20 ~21:20:** M5 (Mobile) shipped — reviewer + tester both clean after 2 rounds on a Control Center bug (touch-reachability fix, then a keyboard regression that fix introduced). Committed and pushed as `fd4835a`. Same session also updated the team protocol: engineer and reviewer now iterate directly with each other on code review until clean, instead of relaying through the PM each round (see section 0/0a). Full story in section 8. **Nothing in progress right now** — M6 (Polish, a11y, perf) is next, not yet scoped. See section 3.
 
 ---
 
 ## 2. Currently in progress
 
-**Both open items from the previous "Next up" are now resolved (2026-09-20 ~19:15):**
-1. Gavin approved the commit — landed as `105592b` (M4) and `cabedfe` (3 §8a fixes), already on `origin/main`. Working tree confirmed clean.
-2. Gavin's call on §8a #4: accept as an unconfirmed, low-probability edge case, don't chase it further. Logged in section 4a.
+**Nothing in progress.** M6 (Polish, a11y, perf) shipped and is committed/pushed — full story archived in section 8. All four sessions are idle, standing by for the next assignment (content/UI work, see section 3).
 
-M5 (Mobile) assigned to the engineer ~19:20 — see section 3 for full scope. Engineer, reviewer, and tester all checked in after individual `/clear`s during this window and re-confirmed section 0a (the new usage-limit protocol below).
+## 3. Next up
 
-### M5 — code complete, PM sanity pass clean, handed to reviewer + tester (2026-09-20, ~20:05)
-Engineer (`personal-website-1d`) resumed per Gavin's go-ahead and finished M5: `ContactApp.tsx` and `ProjectsApp.tsx` reflowed to the same top-segmented-row pattern as About/Skills (desktop untouched); confirmed `ExperienceApp.tsx` needs no change (already single-column). Full recap of everything shipped is in the previous "PAUSED" log entry below (now superseded) — nothing changed there, only Contact/Projects/verification were added.
+**Content + UI polish pass, per Gavin (2026-09-21), not yet scoped/assigned:**
+1. **Real content from Gavin's old site.** He supplied `gavinle_site_content.md` (export of `gavinle.com`) — bio, skills list (Frontend: CSS/HTML/JS/React; Backend: .NET/MySQL/Go/Python), email, GitHub, LinkedIn are usable as-is; Experience/Projects were placeholder-only in that export, Gavin is providing real details separately (watch for his next message with that content before implementing those two sections).
+2. **Per-skill icon + color in `SkillsApp.tsx`.** `@fortawesome/free-brands-svg-icons` is already installed — use real brand icons (React, JS, Python, Go, etc.) not generic placeholders. `.NET` has no dedicated FA brand icon; engineer's judgment call on a reasonable substitute.
+3. **Ambient desktop widget.** Gavin's direction (chosen over a richer-wallpaper-only or dock/menu-bar-only alternative): a non-interactive element on the desktop surface itself — e.g. a large live clock/date display or a short status/quote line. Explicitly **not** a desktop icon or a new app (PROJECT_BRIEF.md §13 bans desktop icons) — keep it decorative, no click target, no new window.
 
-**Verification (engineer):** lint clean; 14/14 tests; build clean (498.70 kB / 153.02 kB gzip). Real dynamic check via throwaway `playwright-core` against real Chrome (confirmed fully uninstalled after): 375×812 + 414×896 portrait, 667×375 landscape, both themes, both languages, reduced motion (own script's under-wait bug caught and fixed mid-run) — nav renders as true horizontal rows (bounding-box verified, not just visual), zero horizontal scroll in every combination, Projects detail view/Back works on mobile. One non-reproducible cold-load 404, matches an already-logged M4 pattern, not treated as new. 21 screenshots in `.qa/` (`m5-*`), nothing deleted. No deviations/blockers.
+**Queued after the above, not yet assigned — brainstormed UI ideas Gavin wants to work through next:** dock icon tooltip descriptions, tactile hover/press micro-animations on dock icons and traffic lights, login-screen cursor parallax on the hardware illustration, dock-icon-origin window open/close animation, project-card hover previews, skills grouped by category (Frontend/Backend, matching the old site's structure — pairs with item 2 above), time-of-day wallpaper palette shift. Two bigger-swing ideas (boot-progress visual pulse, radial-wipe theme toggle) need explicit scope discussion before assigning, not just a routine batch.
 
-**PM sanity pass:** read the diffs for the two highest-risk pieces — `App.tsx`'s new `RestartBootGate` (extracted from the previously-buggy §8a #3 boot/inert logic, now shared by desktop `Experience` and new `MobileExperience`) and `ControlCenter.tsx`'s desktop/mobile split (`ControlCenterFields` extracted, desktop JSX moved verbatim, mobile gets a new bottom-sheet branch) — plus `ContactApp.tsx`/`ProjectsApp.tsx` (the two files just finished). All clean: mechanical extractions, desktop paths preserved exactly, mobile branches follow the established `isMobile` pattern. Matches the engineer's report; not re-running lint/test/build independently per the resolved token-efficiency policy since nothing here reads as risky enough to warrant it.
+Once scoped: same protocol as M1–M6 — engineer → reviewer (direct loop) → PM hands to tester once reviewer says clean → PM triages tester findings → Gavin for commit approval.
 
-**Handed to reviewer (`personal-website-f5`) and tester (`personal-website-30`) in parallel.** Reviewer: static read of the full M5 diff. Tester: full dynamic pass — 375/414px, both themes, both languages, landscape, reduced motion, keyboard-only, plus the mobile-specific flows (login full-screen, home screen grid, AppSheet open/close per app, Control Center bottom sheet).
+Separately, still pending Gavin: whether to commit the previous session's uncommitted `PROGRESS.md` end-of-day cleanup edit (folded into this session's edits above, so now moot — this update supersedes it).
 
-**Reviewer's static review — clean, no blocking/should-fix findings (2026-09-20, ~20:15).** Independently confirmed lint/tsc/build clean (matched 153.02 kB gzip), no i18n/Apple-reference leaks, `APP_ICONS`/`APP_COMPONENTS` extraction is exhaustive-by-construction (`satisfies Record<AppId, ...>`) so Dock/Window and AppSheet/HomeScreen can't drift, `AppSheet`'s modal pattern matches the established `AboutDialog` precedent exactly, `ControlCenterFields` reuse has no duplication risk, z-index layering matches desktop.
+---
 
-One non-blocking nit, accepted as a known edge case rather than sent back: `Root()`'s live `useIsMobile()` switch between `Experience`/`MobileExperience` can restart an in-flight zoom/boot animation (not get stuck — `session.phase` lives above `Root` in context, so whichever subtree mounts next replays and completes its own transition) if the viewport crosses 768px mid-transition. Realistic trigger is a desktop browser being resized narrower mid-animation, not a real mobile device rotating; not in section 7.9's acceptance criteria. **PM's call: log and move on, not worth engineer time this milestone** — revisit only if M6 polish touches boot/zoom phase logic anyway (same revisit condition as §8a #4).
+## 4. Blockers / risks (active)
 
-**Tester's M5 dynamic pass — 1 BLOCKING bug, 1 scope question for Gavin, 1 advisory (2026-09-20, ~20:35).** Evidence in `.qa/` (`tester-m5-*`), `playwright-core` temp-installed/uninstalled per the usual clean pattern.
+Nothing currently blocking. Everything through M5 is committed and pushed (`fd4835a` on `origin/main`, working tree clean).
 
-1. **BLOCKING — mobile Control Center's appearance/brightness controls are physically unreachable at 375×812**, only language works. Measured: the panel's rect is `top:-178, height:209, bottom:31` — 178 of its 209px renders above the viewport. Root cause: `ControlCenter.tsx`'s mobile panel is `fixed inset-x-3 bottom-4`, but its `HomeScreen.tsx` parent (the status strip) has `.glass-panel` (`backdrop-filter`), which makes it the containing block for `fixed` descendants — same mechanism as the already-logged desktop coincidental-positioning issue, but mobile's status strip isn't full-viewport/fixed like `MenuBar` is, so it breaks completely instead of coincidentally working. Confirmed via a real (non-forced) Playwright click at the Light theme button timing out with "element is outside of the viewport." Fails section 7.9's "Control Center works the same" line for 2 of 3 controls. **Sent to the engineer to fix** (per the new workflow, goes straight to the reviewer once done).
-2. **RESOLVED by Gavin (2026-09-20, ~20:45) — no Restart/Log Out entry point on mobile is intentional M5 scope, deferred to a later milestone.** The tester couldn't perform the keyboard-timing check asked of it on `RestartBootGate`'s mobile wiring (unreachable — `HomeScreen.tsx` has no `LogoMenu` equivalent) — accepted as untested-on-mobile for now rather than blocking M5 on it. **Revisit when:** a later milestone adds a mobile logout/restart entry point.
-3. **RESOLVED by Gavin (2026-09-20, ~20:45) — the width-only `useIsMobile()` breakpoint (real phone landscape falls back to desktop) is acceptable as-is.** Section 7.9's literal bar (375/414px widths, landscape doesn't break) is met either way; not worth touch/coarse-pointer detection for this milestone. No action needed.
+## 4a. Resolved blockers (kept for history — don't delete, append instead)
 
-**Everything else — clean, dynamically verified:** login screen (no frame, no scroll), home screen (5-icon grid, live clock, wallpaper, no scroll), AppSheet (full-screen, header/close, focus-in, 15-tab trap held, Escape, focus-restore-to-icon), all 5 apps reflow with no overflow at 375px, reduced motion, 667×375 landscape. One intermittent non-reproducible 404, matches the already-logged M4 pattern.
+0. **⚪ DISPOSED (not fixed) — §8a #4, possible reduced-motion crash.** Repro (log in, open Logo menu, click Log Out within ~150ms of desktop first appearing under reduced motion) was only ever reproducible in headless Chrome; no session on the team (engineer, tester, PM) had real interactive browser access to confirm or deny it. Gavin's explicit decision (2026-09-20 ~19:15): accept as an unconfirmed, low-probability edge case and move on rather than have the team keep chasing it or harden defensively against an unconfirmed crash. Full detail and PM's plausible-root-cause trace (React remounting `Desktop`'s subtree mid-interaction as `session.phase` flips from `'zooming-in'` to `'desktop'`) preserved in section 8a #4. **Revisit if:** it resurfaces in real usage, or M6's polish pass touches the boot/zoom phase logic anyway.
 
-**Engineer's fix — sent straight to reviewer per the new workflow (2026-09-20, ~20:50).** Portaled the mobile Control Center panel out of the status strip's `backdrop-filter` containing block, extended `useDismissablePopover` to track the portaled subtree (new `extraContainerRef` param). Engineer's own verification: lint/test/build clean, real dynamic repro re-confirmed fixed at 375×812/414×896, desktop unaffected.
+1. **✅ RESOLVED — M2 zoom transition bug.** Found and fixed by session `personal-website-1d`, independently re-verified by `personal-website-b5` (this session). Two root causes:
+   - `Hardware.tsx`'s assembly `motion.div` only received `ref={outerRef}` starting at the `zooming-in` phase render — Motion v13 does not attach a ref added on a later render to an already-mounted instance (only at initial mount), so `outerRef.current` stayed permanently `null` and the transform never computed.
+   - `Desktop.tsx`'s root used `min-h-dvh` (viewport-height-based) instead of `h-full`; when nested inside Hardware's small screen box during zooming, it overflowed and got clipped, which is why only the buttons peeked out.
+   - Fix: `assemblyRef` now passed unconditionally on every `Hardware` render; `Desktop.tsx` changed to `h-full`; `src/styles/index.css` got a companion `html, body, #root { height: 100% }` rule, without which `h-full` has nothing to resolve against up the chain. Verified: `personal-website-1d` re-ran its Playwright repro (transform animates through the full scale/translate sequence; Restart/Log Out render centered full-screen with no bezel afterward) and confirmed lint/test/build clean; `personal-website-b5` independently re-ran lint/test/build and reviewed the diff. **Caveat:** the confirming screenshots were deleted during scratch-file cleanup and weren't re-captured — see the process note below. Recommend Gavin does one real click-through when convenient, but this is due diligence, not a sign of doubt about the fix.
+   - **Process lesson:** QA screenshots that prove a bug fix should be kept somewhere durable (e.g. a gitignored `.progress-assets/` or attached to the commit message description) rather than deleted as "scratch," or the verification claim becomes unauditable later. Do this next time.
 
-**Reviewer's review of the fix — clean (2026-09-20, ~20:55).** Worked directly with the engineer per the new workflow (PM not in that exchange). Independently re-verified lint/tsc/test/build; hand-traced the dismiss-logic changes (both focus-transition directions, pointerdown, the preserved edge case) — correct, no regressions, `LogoMenu`'s call site unaffected, desktop panel untouched. One trivial nit sent directly to the engineer (report wording mismatch, not worth a re-fix). Reported "clean" to PM. **Sent to the tester for a targeted re-test of just the mobile Control Center fix.**
+2. **✅ RESOLVED — mistaken universal claim about browser tooling.** An earlier version of this file said no browser automation was available in *any* session's environment. That was only true for `personal-website-b5`'s sandbox — `personal-website-1d`'s had `playwright-core` reachable via `node_modules/.bin` and used it for a real headless repro (now cleaned up, confirmed no trace in `package.json`/`package-lock.json`/`node_modules`). **Lesson:** "no browser tool" is a per-session/per-sandbox fact, not a project-wide one — state it as local, and check again each session rather than trusting a prior session's negative result.
 
-**Tester's re-test — touch reachability confirmed fixed, but the fix introduced a NEW BLOCKING keyboard regression (2026-09-20, ~21:00).** Evidence: `.qa/tester-m5-cc-retest.cjs`/`-taborder.cjs` + screenshots.
+3. **⚪ DISPOSED (accepted gap) — M6 Lighthouse scores unmeasured.** No session on the team has a Lighthouse CLI available in its sandbox, so section 10's "Performance 90+ / Accessibility 95+" targets were never verified with an actual score. Everything Lighthouse would measure is otherwise addressed directly (bundle size ~153KB gzip well under the 200KB bar, `React.lazy` code-splitting, real contrast math, correct ARIA semantics). **Gavin's decision (2026-09-21): accept the gap, don't chase a number.** **Revisit if:** someone on the team gets real Lighthouse access, or Gavin wants to run it himself against a deployed build post-M7.
 
-*Confirmed fixed:* panel geometry fully on-screen at both 375×812 and 414×896 (`panelParentIsBody: true`); all 3 controls reachable via real unforced clicks (theme toggles `data-theme`, slider responds once focused, EN/VI toggles `lang`); outside-tap dismiss and Escape-refocuses-trigger both work.
+---
 
-*New BLOCKING bug:* keyboard-only users can no longer reach the panel at all. Traced 12 Tabs from the trigger — focus jumps straight to the home screen's app icon grid (next in *document order* in the original tree, since the panel is now portaled to the end of `document.body` and no longer DOM-adjacent to the trigger), and `useDismissablePopover`'s `handleFocusOut` correctly-by-its-own-logic sees that as outside both `containerRef`/`extraContainerRef` and dismisses the panel on the very first Tab — before any panel control is ever focused. Pre-fix, trigger and panel shared one subtree so Tab order was at least contiguous (reachable, just off-screen); post-fix, touch works but keyboard is newly broken. Desktop unaffected (still rendered inline, not portaled). Fails section 10's "every interactive element reachable by Tab" for mobile Control Center. **Sent back to the engineer** — tester's suggested direction: focus the panel's first control (e.g. the Dark button) programmatically on open, same pattern `AppSheet`/`AboutDialog` already use, so the first Tab cycles within the panel instead of escaping. Per the new workflow, the fix goes to the reviewer again before coming back to the tester.
+## 5. Deviations from PROJECT_BRIEF.md (need Gavin's sign-off)
 
-**Engineer's 2nd fix — sent straight to reviewer (2026-09-20, ~21:05).** Auto-focuses the mobile panel's first control on open (mobile-only, same pattern as `AppSheet`/`AboutDialog`). Engineer's own verification: lint/test/build clean, real keyboard-driven repro confirms full Tab reachability of all 5 controls plus correct dismiss-and-continue on tab-out (no trap), desktop unaffected.
+PROJECT_BRIEF.md section 0.1 says not to swap libraries/versions without asking. This one was a hard blocker, not a preference, but it's still a deviation and needs your eyes:
 
-**Reviewer's review of the 2nd fix — clean (2026-09-20, ~21:10).** Worked directly with the engineer. Independently re-verified lint/tsc/test/build; hand-traced the effect-ordering/focus-race concern (hook declaration order guarantees the dismiss-listener attaches before the programmatic `focus()` fires) — confirmed correct, no regression. One non-blocking DRY nit sent directly to the engineer (duplicated focusable-element selector vs. `useFocusTrap.ts`'s constant), not worth a re-fix. Reported "clean" to PM. **Sent to the tester to re-run its original keyboard repro.**
+1. **TypeScript pinned to `^5.9.3`, not `^7.0.2`.** `typescript@7.0.2` is genuinely `latest` on npm as of 2026-09-20 (it's the new native/Go-based compiler), but `typescript-eslint@8.70.0` (also latest) still declares a peer dependency of `typescript >=4.8.4 <6.1.0` — installing with TS7 fails with an unresolvable ERESOLVE conflict. No newer `typescript-eslint` major supports TS7 yet (checked npm dist-tags directly). Downgraded to the latest 5.x line so the toolchain installs and lints at all.
+   - **Revisit when:** `typescript-eslint` ships a version whose peer range includes `^7`. Worth a quick `npm view typescript-eslint peerDependencies` check before each future session touches `package.json`.
 
-**Tester's re-test — clean, Control Center bug fully closed (2026-09-20, ~21:15).** Full 12-Tab trace at 375×812: auto-focus lands on Dark immediately on open; Tab 1-4 cycles Light→slider→EN→VI with the panel staying open (`insidePanel: true` throughout) — the old first-Tab self-dismiss is gone; Tab 5 (past the last control) correctly dismisses and continues forward into the page (not a trap); Escape-immediately-after-open still closes and refocuses the trigger. **No outstanding M5 findings from either the reviewer or the tester** — M5 is clean end to end.
+2. **`LoginScreen`/`Hardware` render hardcoded dark regardless of theme preference — deviates from section 7.1 ("follows the current theme").** Flagged by the engineer during M6 (2026-09-21); fixing it means designing a light-mode version of the hardware illustration, which was judged bigger design scope than an M6 diff. **Gavin's call (2026-09-21): accept dark-only as intentional, not a bug to chase.**
+   - **Revisit when:** never, unless Gavin changes his mind — this is a closed decision, not a tracked gap.
 
-**M5 — Mobile: ✅ Done.** Code complete, reviewer clean (2 rounds — initial pass + the CC bug fix + its own keyboard regression, each independently re-verified), tester clean (full dynamic pass + 2 rounds of targeted re-test on the CC bug), all via real dynamic checks (headless Playwright driving an installed real Chrome binary, consistent with M1-M4's verification method). §8a #4 remains the only unresolved item project-wide, already disposed by Gavin as an accepted edge case. **Ready for Gavin's commit approval** — see section 3.
+No other deviations from section 2 (Locked Decisions) or section 13 (Out of Scope) have been made.
 
-**M5 state as reported (all uncommitted/unstaged on disk, git status independently confirmed by PM, nothing lost):**
+---
 
-*Done:*
-- `src/hooks/useIsMobile.ts` — `matchMedia` hook, `(max-width: 767px)`.
-- `src/config/apps.ts` — extracted `APP_ICONS` (id/icon/gradient) out of `Dock.tsx` so Dock and the new mobile grid share one source.
-- `src/components/apps/registry.ts` — extracted the lazy `APP_COMPONENTS` map out of `Desktop.tsx` so `Window` and the new `AppSheet` share one source.
-- `ControlCenter.tsx` — mobile-aware: shared fieldset controls pulled into a local `ControlCenterFields`, `isMobile` branch renders a bottom-sheet panel instead of the desktop top-right dropdown. Desktop behavior/markup unchanged.
-- `src/components/mobile/AppSheet.tsx` (new) — full-screen modal sheet, slide-up/down via Motion, header + close button, focus-trapped, Escape closes, reuses `APP_COMPONENTS`.
-- `src/components/mobile/HomeScreen.tsx` (new) — wallpaper + status strip (clock + `ControlCenter`) + 3-col grid of the same 5 `APP_ICONS`, opens `AppSheet` on tap, restores focus to the tapped icon on close.
-- `App.tsx` — extracted `RestartBootGate` (the empirically-verified §8a #3 inert/overlay-timing fix, previously inlined in `Experience`) so both desktop `Experience` and new `MobileExperience` share the exact same mechanism rather than a second copy. Added `MobileExperience` (no Hardware frame, no zoom — plain cross-fade, same treatment as the existing reduced-motion path) and a `Root` component switching `Experience`/`MobileExperience` via `useIsMobile()`.
-- `AboutApp.tsx`, `SkillsApp.tsx` — reflowed: sidebar nav becomes a horizontal top segmented/scrollable list under `isMobile`, desktop path untouched.
-- `ContactApp.tsx` — import added, reflow edit was **mid-edit, not yet applied** when the notice landed.
+## 6. Veto-able assumptions applied so far
 
-*Not started:*
-- Finish `ContactApp.tsx` reflow (same pattern as Skills/About).
-- `ProjectsApp.tsx` reflow (filter sidebar → top segmented control).
-- `ExperienceApp.tsx` — engineer expects no change needed (already single-column).
-- lint/test/build.
-- Real dynamic check at 375/414px, both themes, both languages, landscape, reduced motion.
+From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at review. #2 and #12 aren't built yet (M4/M5).
 
-**Reviewer/tester status:** both checked in idle, correctly told to keep standing by — nothing handed to either yet, M5 isn't done.
+| # | Gap | Applied as | Milestone |
+|---|---|---|---|
+| 1 | Active app name label | Shows localized "Desktop" when no window is open (window system isn't built until M4, so it always shows "Desktop" for now); dock click sets the label + indicator dot | M3 |
+| 3 | Keyboard/mouse decorative vs interactive | Fully decorative (`aria-hidden`); Enter key triggers login via a `window` keydown listener; Login button is a real `<button>`, also clickable via the avatar button | M1 |
+| 7 | Light mode look | Light gray glass panels, light animated gradient, dark text — implemented, per engineer's report, as CSS variables swapped on `data-theme`, same as dark | M3 |
+| 8 (impl. detail) | Brightness slider mechanism | Implemented as `backdrop-filter: brightness(N%)` on a full-screen overlay (not `filter` on the content tree) — engineer's literal reading of "CSS brightness filter on a full-screen overlay" | M3 |
+| 10 | Default language detection | Already built in M1 (`detectLanguage` on `navigator.language`); M3 just added the Control Center UI to override it | M1/M3 |
+
+**New engineer decisions not explicitly locked by the brief, need Gavin's eyes (not blocking):**
+- Dock icons: About me = `faUser`, Skills = `faGear`, Experience = `faCalendarDays`, Projects = `faFolderOpen`, Contact = `faEnvelope`, each on its own gradient tile color.
+- Wallpaper: pure CSS radial-gradient background-position drift (30s, alternating), no canvas; paused on both tab-hidden and reduced-motion.
+- "Control Center" localized to "Trung tâm điều khiển" in VI.
+- EN/VI segmented-control button labels left as literal strings (not run through `Localized<T>`), since they're language identifiers, not language-dependent prose.
+- `AboutDialog` now has a full focus trap (`useFocusTrap`, same hook built for M4's `Window`) — resolved during M6, confirmed present in code 2026-09-21.
+
+---
+
+## 7. Open items for Gavin (non-blocking, from brief section 16 + new)
+
+1. Confirm veto-able defaults not yet built: #1 (active app name label), #2 (dimmed traffic lights), #7 (light mode look), #10 (default language detection), #12 (mobile flow) — these land in M3/M5.
+2. **IN PROGRESS 2026-09-21:** real content — Gavin supplied his old site's export (`gavinle_site_content.md`); bio/skills/contact are usable as-is, Experience/Projects were placeholder-only in that export and Gavin is providing real details directly. See section 3 for the content-population task this feeds.
+3. Choose the final logo (currently `faLemon` placeholder in `src/config/brand.ts`).
+4. Decide domain / custom domain for Cloudflare Workers.
+5. Visually confirm M1 at 1280/1440/1920 + tablet widths, and re-confirm M2 end-to-end once the zoom fix (section 4a #1) is committed.
+6. Optional later: real avatar photo, resume link, project screenshots.
+
+---
+
+## 8. Milestone log (detailed, append-only — newest first)
+
+### M6 (Polish, a11y, perf) — shipped, committed, pushed (2026-09-21)
+Team restarted after a reboot (new session mapping: PM `personal-website-fa`, engineer `personal-website-a4`, reviewer `personal-website-dc`, tester `personal-website-52`). PM scoped M6 from `PROJECT_BRIEF.md` §10/§12 plus two carried-over backlog items and assigned it to the engineer.
+
+**Engineer's batch — 9 files:** `Window.tsx` (dialog role/`aria-labelledby`), a real light-theme contrast bug fixed across 4 files (`opacity-60` text measured 3.87:1, below AA), `ControlCenter.tsx` (portaled + properly anchored — closes the M3-review backlog item on coincidental positioning), `App.tsx` (freezes the mobile/desktop breakpoint switch during boot/zoom transitions — closes the M5-review backlog item), `SkillsApp.tsx` (`role="progressbar"` added), `index.html` (`noscript` fallback with real name/title/contact content, meta/OG tags, a favicon fix), plus `Desktop.tsx`/`AppSheet.tsx`/`ExperienceApp.tsx`/`useDismissablePopover.ts` touched incidentally. `AboutDialog`'s full focus trap (open question since M3/M4) turned out already resolved via the shared `useFocusTrap` hook. Lint/test/build clean throughout, final bundle 153.21 kB gzip (well under the ~200KB bar).
+
+**Reviewer — clean after 1 round:** two findings, both fixed and independently re-verified (`noscript` fallback initially missing real name/title/contact content per `PROJECT_BRIEF.md` §3 gap #17; a stale comment in `useDismissablePopover.ts` left over from the portal change).
+
+**Tester — clean, no findings.** Real (non-headless) Chrome via a throwaway `playwright-core` install (installed/uninstalled cleanly, confirmed no trace). Verified with real measurements, not just visual checks: light-theme contrast at 5.2:1 via actual composited-color math (walked the full ancestor background chain); `ControlCenter` portal positions to the pixel via its formula, outside-click/Escape dismiss both work, auto-focus-on-open avoids the exact keyboard-regression class that hit M5's mobile Control Center; breakpoint freeze confirmed via settle-time measurement (2882ms baseline vs. 2995ms mid-resize, no restart/double-run); `noscript` fallback correct in both languages; dialog/progressbar roles correct in both languages. Supplementary VI/reduced-motion/mobile-375 sweep also clean. Evidence in `.qa/` (`tester-m6-dynamic.cjs`, `tester-m6-sweep.cjs`, results JSON, 10 screenshots).
+
+**Two items closed by Gavin's decision, not by a code fix:**
+1. `LoginScreen`/`Hardware` render hardcoded dark regardless of theme — a real deviation from §7.1, but Gavin accepted it as intentional rather than scope a light-mode illustration redesign (logged in section 5, deviation #2).
+2. No Lighthouse CLI available anywhere on the team, so §10's Performance 90+/Accessibility 95+ targets are unmeasured — Gavin accepted the gap rather than chase a number neither the reviewer's static read nor the tester's real-browser checks can produce (logged in section 4a #3).
+
+**M6 marked ✅ Done.** Committed and pushed. Gavin immediately followed up with the next phase of work — real content from his old site, per-skill icons/colors, and an ambient desktop widget — see section 3.
+
+### M5 (Mobile) — shipped, committed, pushed (2026-09-20, ~19:20–21:20)
+Engineer resumed M5 (per Gavin's go-ahead after a §0a usage-limit pause), finished `ContactApp.tsx`/`ProjectsApp.tsx` reflow to match the About/Skills pattern, confirmed `ExperienceApp.tsx` needed no change. Verification: lint/test/build clean (498.70 kB/153.02 kB gzip); real dynamic check via throwaway `playwright-core` against a real Chrome install (installed/uninstalled cleanly, confirmed no trace) across 375×812, 414×896, 667×375 landscape, both themes/languages, reduced motion. 21 screenshots in `.qa/` (`m5-*`).
+
+**PM sanity pass:** read the two highest-risk diffs — `App.tsx`'s `RestartBootGate` extraction (shares the previously-buggy §8a #3 boot/inert mechanism between desktop `Experience` and new `MobileExperience`) and `ControlCenter.tsx`'s desktop/mobile split (`ControlCenterFields` extracted, desktop JSX preserved verbatim) — plus the two just-finished app files. Clean, mechanical, matches the report.
+
+**Reviewer's static review — clean, one non-blocking nit accepted as a known edge case:** `Root()`'s live `useIsMobile()` switch can restart an in-flight zoom/boot animation if the viewport crosses 768px mid-transition (self-healing, not stuck — `session.phase` lives above `Root`); realistic trigger is a desktop browser resize, not a real phone rotating. Logged, not fixed — revisit only if M6 touches boot/zoom logic anyway.
+
+**Tester's dynamic pass — 1 blocking bug, 2 scope questions resolved by Gavin:**
+1. **Mobile Control Center's appearance/brightness controls were physically unreachable at 375×812** (panel rendered 178 of 209px above the viewport) — `ControlCenter.tsx`'s mobile panel (`fixed inset-x-3 bottom-4`) was resolving against `HomeScreen.tsx`'s `.glass-panel` (`backdrop-filter`) status-strip parent as its containing block instead of the viewport, since that parent isn't full-viewport/fixed the way desktop's `MenuBar` is. Confirmed via a real (non-forced) Playwright click timing out "outside the viewport."
+   - **Engineer's fix:** portaled the panel to `document.body`, extended `useDismissablePopover` with an `extraContainerRef` param to track the portaled subtree. Reviewer confirmed clean (hand-traced dismiss-logic changes, both directions).
+   - **Tester's re-test found a NEW blocking regression the portal introduced:** keyboard users could no longer reach the panel at all — Tab from the trigger jumped straight to the home screen's icon grid (next in the *original* tree's document order, since the panel was no longer DOM-adjacent), and `useDismissablePopover`'s focusout logic dismissed the panel on the very first Tab before any control was ever focused.
+   - **Engineer's 2nd fix:** auto-focus the panel's first control on open (mobile-only, same pattern as `AppSheet`/`AboutDialog`). Reviewer confirmed clean (traced the effect-ordering/focus-race concern by hand). **Tester's final re-test: clean** — full 12-Tab trace confirms all 5 controls reachable, panel dismisses-and-continues past the last control (not a trap), Escape still works.
+2. Gavin resolved: no mobile Restart/Log Out entry point is intentional M5 scope, deferred to a later milestone (`RestartBootGate`'s mobile wiring stays untested-on-mobile for now).
+3. Gavin resolved: the width-only `useIsMobile()` breakpoint (real phone landscape falls back to desktop) is acceptable as-is — section 7.9's literal bar is met either way.
+
+**M5 marked ✅ Done.** Committed as `fd4835a`, pushed to `origin/main`. Working tree confirmed clean afterward. Same commit also updated `CLAUDE.md`/`PROGRESS.md` §0 to the new engineer↔reviewer direct-loop workflow (see section 0/0a) — Gavin's call, made mid-M5, effective from the Control Center bug-fix round onward.
+
+### Batch committed + pushed; §8a #4 disposed by Gavin; M5 up next (2026-09-20, ~19:15)
+PM session `personal-website-b5` was restarted after a `/clear`. Re-read `CLAUDE.md`/`PROGRESS.md`, ran `ListAgents` and confirmed all 3 peer sessions (`personal-website-1d` engineer, `personal-website-f5` reviewer, `personal-website-30` tester) still live and idle, matching the mapping already recorded in section 0 — no re-bootstrap needed. Checked `git status`/`git log` and found the two open items from the previous "Next up" had, in fact, already been actioned outside this session: `105592b` (M4) and `cabedfe` (the 3 §8a fixes) were already committed and pushed to `origin/main` (working tree clean, local `main` matches `origin/main` exactly) — the PROGRESS.md text just hadn't been updated to reflect it yet, so it still read as "waiting on Gavin." Brought Gavin the one remaining real decision (§8a #4 disposition) plus a confirmation on the already-landed commit; he confirmed the commit and chose to accept §8a #4 as an unconfirmed edge case (logged in section 4a #0). Updated this file's sections 1–4a to match reality. Proceeding to assign M5 to the engineer next.
 
 ### Tester's M4 + retest pass — 1 bug reopened, everything else clean (2026-09-20, ~18:10)
 Tester (`personal-website-30`) ran with headless Chromium again (temp-installed `playwright-core`, fully uninstalled after, confirmed via `npm uninstall` + grep — same clean process as its first pass). 43 screenshots + 5 repro scripts in `.qa/` (`tester-m4-*`/`tester-retest*` prefix), nothing deleted. Confirmed no real (non-headless) browser access in its sandbox either — did not re-attempt §8a #4 (correctly avoided submitting a second headless data point).
@@ -178,87 +233,6 @@ Reviewer (`personal-website-f5`) reviewed `Hardware.tsx`, `ControlCenter.tsx`, `
 
 ### M4 recheck (reviewer) — clean
 Reviewer checked all 5 app files (not just the 3 named), confirmed the 4 aria-labels route through `t()`, `CHANNEL_LABEL` is now id-keyed, and the education badge works — no blocking/should-fix findings, one non-blocking suggestion (pre-existing `as Record<...>` cast pattern shared with `CHANNEL_HREF`). PM independently re-ran lint/test/build (exact match: 14/14 tests, 493.89 kB/152.28 kB gzip main + same 5 app chunk sizes) and grepped the actual fix lines across all 5 files — confirmed. **M4 is review-clean.**
-
-## 3. Next up
-
-**M5 is fully clean and awaiting Gavin's commit approval** (see section 2's final M5 entries). Once approved: commit + push, then M6 (Polish, a11y, perf) is next per `PROJECT_BRIEF.md` section 12.
-
-**M5 — Mobile** (PROJECT_BRIEF.md section 7.9 + section 12) — scope, for reference:
-- Landing: full-screen login screen under 768px, no hardware frame, same info/Login button as desktop.
-- After boot: home screen — wallpaper, top status strip (live clock + Control Center icon), grid of 5 large rounded app icons with labels.
-- App open: full-screen sheet slides up, header with title + close button, content reflows to a single column (sidebars → top segmented control or list).
-- Control Center: same functionality (appearance, brightness, language), mobile-appropriate presentation.
-- Accept: fully usable at 375px and 414px widths, no horizontal scroll, landscape doesn't break.
-
-Once the engineer delivers, same protocol as M1–M4: PM sanity pass → reviewer + tester in parallel → triage → Gavin for commit approval.
-
----
-
-## 4. Blockers / risks (active)
-
-Nothing currently blocking. The full §8a fix batch + M4 are uncommitted — see sections 2/3 — but that's a pending action awaiting Gavin's go-ahead, not a blocker.
-
-## 4a. Resolved blockers (kept for history — don't delete, append instead)
-
-0. **⚪ DISPOSED (not fixed) — §8a #4, possible reduced-motion crash.** Repro (log in, open Logo menu, click Log Out within ~150ms of desktop first appearing under reduced motion) was only ever reproducible in headless Chrome; no session on the team (engineer, tester, PM) had real interactive browser access to confirm or deny it. Gavin's explicit decision (2026-09-20 ~19:15): accept as an unconfirmed, low-probability edge case and move on rather than have the team keep chasing it or harden defensively against an unconfirmed crash. Full detail and PM's plausible-root-cause trace (React remounting `Desktop`'s subtree mid-interaction as `session.phase` flips from `'zooming-in'` to `'desktop'`) preserved in section 8a #4. **Revisit if:** it resurfaces in real usage, or M6's polish pass touches the boot/zoom phase logic anyway.
-
-1. **✅ RESOLVED — M2 zoom transition bug.** Found and fixed by session `personal-website-1d`, independently re-verified by `personal-website-b5` (this session). Two root causes:
-   - `Hardware.tsx`'s assembly `motion.div` only received `ref={outerRef}` starting at the `zooming-in` phase render — Motion v13 does not attach a ref added on a later render to an already-mounted instance (only at initial mount), so `outerRef.current` stayed permanently `null` and the transform never computed.
-   - `Desktop.tsx`'s root used `min-h-dvh` (viewport-height-based) instead of `h-full`; when nested inside Hardware's small screen box during zooming, it overflowed and got clipped, which is why only the buttons peeked out.
-   - Fix: `assemblyRef` now passed unconditionally on every `Hardware` render; `Desktop.tsx` changed to `h-full`; `src/styles/index.css` got a companion `html, body, #root { height: 100% }` rule, without which `h-full` has nothing to resolve against up the chain. Verified: `personal-website-1d` re-ran its Playwright repro (transform animates through the full scale/translate sequence; Restart/Log Out render centered full-screen with no bezel afterward) and confirmed lint/test/build clean; `personal-website-b5` independently re-ran lint/test/build and reviewed the diff. **Caveat:** the confirming screenshots were deleted during scratch-file cleanup and weren't re-captured — see the process note below. Recommend Gavin does one real click-through when convenient, but this is due diligence, not a sign of doubt about the fix.
-   - **Process lesson:** QA screenshots that prove a bug fix should be kept somewhere durable (e.g. a gitignored `.progress-assets/` or attached to the commit message description) rather than deleted as "scratch," or the verification claim becomes unauditable later. Do this next time.
-
-2. **✅ RESOLVED — mistaken universal claim about browser tooling.** An earlier version of this file said no browser automation was available in *any* session's environment. That was only true for `personal-website-b5`'s sandbox — `personal-website-1d`'s had `playwright-core` reachable via `node_modules/.bin` and used it for a real headless repro (now cleaned up, confirmed no trace in `package.json`/`package-lock.json`/`node_modules`). **Lesson:** "no browser tool" is a per-session/per-sandbox fact, not a project-wide one — state it as local, and check again each session rather than trusting a prior session's negative result.
-
----
-
-## 5. Deviations from PROJECT_BRIEF.md (need Gavin's sign-off)
-
-PROJECT_BRIEF.md section 0.1 says not to swap libraries/versions without asking. This one was a hard blocker, not a preference, but it's still a deviation and needs your eyes:
-
-1. **TypeScript pinned to `^5.9.3`, not `^7.0.2`.** `typescript@7.0.2` is genuinely `latest` on npm as of 2026-09-20 (it's the new native/Go-based compiler), but `typescript-eslint@8.70.0` (also latest) still declares a peer dependency of `typescript >=4.8.4 <6.1.0` — installing with TS7 fails with an unresolvable ERESOLVE conflict. No newer `typescript-eslint` major supports TS7 yet (checked npm dist-tags directly). Downgraded to the latest 5.x line so the toolchain installs and lints at all.
-   - **Revisit when:** `typescript-eslint` ships a version whose peer range includes `^7`. Worth a quick `npm view typescript-eslint peerDependencies` check before each future session touches `package.json`.
-
-No other deviations from section 2 (Locked Decisions) or section 13 (Out of Scope) have been made.
-
----
-
-## 6. Veto-able assumptions applied so far
-
-From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at review. #2 and #12 aren't built yet (M4/M5).
-
-| # | Gap | Applied as | Milestone |
-|---|---|---|---|
-| 1 | Active app name label | Shows localized "Desktop" when no window is open (window system isn't built until M4, so it always shows "Desktop" for now); dock click sets the label + indicator dot | M3 |
-| 3 | Keyboard/mouse decorative vs interactive | Fully decorative (`aria-hidden`); Enter key triggers login via a `window` keydown listener; Login button is a real `<button>`, also clickable via the avatar button | M1 |
-| 7 | Light mode look | Light gray glass panels, light animated gradient, dark text — implemented, per engineer's report, as CSS variables swapped on `data-theme`, same as dark | M3 |
-| 8 (impl. detail) | Brightness slider mechanism | Implemented as `backdrop-filter: brightness(N%)` on a full-screen overlay (not `filter` on the content tree) — engineer's literal reading of "CSS brightness filter on a full-screen overlay" | M3 |
-| 10 | Default language detection | Already built in M1 (`detectLanguage` on `navigator.language`); M3 just added the Control Center UI to override it | M1/M3 |
-
-**New engineer decisions not explicitly locked by the brief, need Gavin's eyes (not blocking):**
-- Dock icons: About me = `faUser`, Skills = `faGear`, Experience = `faCalendarDays`, Projects = `faFolderOpen`, Contact = `faEnvelope`, each on its own gradient tile color.
-- Wallpaper: pure CSS radial-gradient background-position drift (30s, alternating), no canvas; paused on both tab-hidden and reduced-motion.
-- "Control Center" localized to "Trung tâm điều khiển" in VI.
-- EN/VI segmented-control button labels left as literal strings (not run through `Localized<T>`), since they're language identifiers, not language-dependent prose.
-- `AboutDialog` has initial focus + Escape + focus-return, but no full focus trap. Brief section 10 doesn't explicitly demand a trap at this milestone — engineer flagged it as a candidate for now vs. M6; PM has not decided, awaiting reviewer input.
-
----
-
-## 7. Open items for Gavin (non-blocking, from brief section 16 + new)
-
-1. Confirm veto-able defaults not yet built: #1 (active app name label), #2 (dimmed traffic lights), #7 (light mode look), #10 (default language detection), #12 (mobile flow) — these land in M3/M5.
-2. Provide real content: bio, skills, experience, projects, contact links (currently all `TODO(gavin)` placeholders in `src/data/content.ts`).
-3. Choose the final logo (currently `faLemon` placeholder in `src/config/brand.ts`).
-4. Decide domain / custom domain for Cloudflare Workers.
-5. Visually confirm M1 at 1280/1440/1920 + tablet widths, and re-confirm M2 end-to-end once the zoom fix (section 4a #1) is committed.
-6. Optional later: real avatar photo, resume link, project screenshots.
-
----
-
-## 8. Milestone log (detailed, append-only — newest first)
-
-### Batch committed + pushed; §8a #4 disposed by Gavin; M5 up next (2026-09-20, ~19:15)
-PM session `personal-website-b5` was restarted after a `/clear`. Re-read `CLAUDE.md`/`PROGRESS.md`, ran `ListAgents` and confirmed all 3 peer sessions (`personal-website-1d` engineer, `personal-website-f5` reviewer, `personal-website-30` tester) still live and idle, matching the mapping already recorded in section 0 — no re-bootstrap needed. Checked `git status`/`git log` and found the two open items from the previous "Next up" had, in fact, already been actioned outside this session: `105592b` (M4) and `cabedfe` (the 3 §8a fixes) were already committed and pushed to `origin/main` (working tree clean, local `main` matches `origin/main` exactly) — the PROGRESS.md text just hadn't been updated to reflect it yet, so it still read as "waiting on Gavin." Brought Gavin the one remaining real decision (§8a #4 disposition) plus a confirmation on the already-landed commit; he confirmed the commit and chose to accept §8a #4 as an unconfirmed edge case (logged in section 4a #0). Updated this file's sections 1–4a to match reality. Proceeding to assign M5 to the engineer next.
 
 ### M4 fixes made, PM-verified; reviewer cleared and re-briefed; PM told to hold (2026-09-20, ~16:00–16:10)
 **Engineer** made all 3 fixes: (1) the 4 hardcoded `aria-label`s now route through new `uiStrings` entries (`notesNavLabel`, `skillCategoriesNavLabel`, `projectFiltersNavLabel`, `contactChannelsNavLabel`) via `t()`; (2) `ContactApp.tsx` got a `CHANNEL_LABEL` id-keyed `Record` (same pattern as the existing `CHANNEL_ICON`/`CHANNEL_HREF`), replacing the 3 positional lookups; (3) `ExperienceEntry.kind` is now used — education entries get a visually distinct timeline dot (ring vs. solid) and a small badge with a graduation-cap icon and localized "Education"/"Học vấn" label. Lint/test/build clean. **Engineer flagged, unprompted, that it has no browser tool in its sandbox to visually confirm these** — good instinct per CLAUDE.md's rule rather than silently asserting confidence it didn't have.

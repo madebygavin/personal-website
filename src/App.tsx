@@ -247,8 +247,27 @@ function MobileExperience() {
   return <HomeScreen />
 }
 
+// `useIsMobile`'s live media-query value can flip mid-transition if a
+// desktop browser is resized across the 768px breakpoint while the session
+// is mid-boot/zoom — since Experience and MobileExperience are different
+// component types, React would unmount one and mount the other, restarting
+// whatever animation was in flight (self-healing since session.phase lives
+// above Root, but a visible glitch — flagged in PROGRESS.md section 8, M5
+// review). Freezing the switch to the two stable phases (landing/desktop)
+// and only adopting the live value there avoids remounting mid-transition;
+// a resize during 'landing'/'desktop' still takes effect immediately. State
+// is adjusted during render (not an effect), same pattern as
+// RestartBootGate above, so the transition-ending render already reflects
+// any breakpoint change that happened while frozen.
 function Root() {
-  const isMobile = useIsMobile()
+  const liveIsMobile = useIsMobile()
+  const session = useSession()
+  const isStablePhase = session.phase === 'landing' || session.phase === 'desktop'
+  const [isMobile, setIsMobile] = useState(liveIsMobile)
+  if (isStablePhase && liveIsMobile !== isMobile) {
+    setIsMobile(liveIsMobile)
+  }
+
   return isMobile ? <MobileExperience /> : <Experience />
 }
 

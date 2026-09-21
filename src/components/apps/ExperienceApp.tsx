@@ -18,7 +18,7 @@ export function ExperienceApp() {
                 entry.kind === 'education' ? 'bg-white/40 ring-2 ring-[var(--color-accent)]' : 'bg-[var(--color-accent)]'
               }`}
             />
-            <div className="text-xs font-medium opacity-60">{t(entry.period)}</div>
+            <div className="text-xs font-medium opacity-70">{t(entry.period)}</div>
             <div className="text-base font-semibold">{t(entry.role)}</div>
             <div className="flex items-center gap-2">
               <div className="text-sm opacity-80">{entry.org}</div>
