@@ -75,13 +75,12 @@ When a session hits that threshold:
 
 ## 2. Currently in progress
 
-**Nothing in progress.** Content/skill-icons/desktop-clock batch shipped and committed (`f3ddd23`) — full story archived in section 8. All four sessions idle, standing by.
+**Nothing in progress.** Skills app animation is done — reviewer clean, tester clean (see section 8) — sitting uncommitted, awaiting Gavin's commit approval. All four sessions idle, standing by.
 
 ## 3. Next up
 
 **On hold, per Gavin (2026-09-21) — waiting on his input before assigning:**
-1. **Experience and Education real content.** Still `TODO(gavin)` placeholders — the old-site export had no real data here. Gavin is sending actual details (company/title/dates/location/achievements for work; school/degree/dates for education); forward to the engineer the moment they land.
-2. **Skills animation.** Gavin wants animation added to the Skills app; PM proposed a staggered bar-fill-in on open + subtle icon hover, respecting `prefers-reduced-motion` — pending Gavin's confirmation or a different direction before assigning.
+1. **Experience and Education real content.** Still `TODO(gavin)` placeholders — the old-site export had no real data here. Gavin said (2026-09-21) this comes right after the Skills animation task — forward to the engineer the moment it lands.
 
 **Still queued after the above, not yet assigned — brainstormed UI ideas:** dock icon tooltip descriptions, tactile hover/press micro-animations on dock icons and traffic lights, login-screen cursor parallax on the hardware illustration, dock-icon-origin window open/close animation, project-card hover previews, skills grouped by category (Frontend/Backend, matching the old site's structure), time-of-day wallpaper palette shift. Two bigger-swing ideas (boot-progress visual pulse, radial-wipe theme toggle) need explicit scope discussion before assigning, not just a routine batch.
 
@@ -158,6 +157,17 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### Skills app animation — reviewer + tester clean, awaiting commit approval (2026-09-21)
+Per Gavin's confirmed direction (staggered bar-fill-in on open, subtle icon hover, `prefers-reduced-motion` respected, keyboard-equivalent focus state): engineer shipped it in a single file, `src/components/apps/SkillsApp.tsx`. Lint/test/build clean, engineer's own real-browser dynamic check done (both themes, both languages, reduced-motion on/off, keyboard-only).
+
+**Reviewer — clean, no blocking/should-fix.** Two optional nits sent to the engineer (stale "13-skill" comment vs. `content.ts`'s actual max of 4; a tab-order-density note), neither gates clean.
+
+**Tester — clean, no blocking/should-fix.** Real headless Chrome (throwaway `playwright-core`, confirmed removed after). Verified all 5 scope items with real measurements: staggered fill timing sampled every 60ms (clear per-bar stagger, not simultaneous); icon hover vs. Tab-focus produce byte-identical computed style (real keyboard equivalent, visible focus ring); reduced motion makes both the fill and the hover/focus effect true no-ops; `aria-valuenow` sampled repeatedly mid-animation and after settle — always the real `skill.level`, never an in-flight value; both themes/languages plus a 390px mobile smoke test all correct.
+
+**One nit for PM triage — accepted as-is, not sent back:** each skill icon is now `tabIndex={0}` with an `aria-label` duplicating the always-visible skill-name text, purely so the hover animation has a keyboard-equivalent replay trigger — i.e. a real Tab stop with no operation. Low impact today (max 4 skills/category per `content.ts`, so a small tab-sequence addition), but it would scale linearly if a category ever grows. **PM's call:** accept, don't loop back to the engineer for this — it's cosmetic-parity plumbing, not a WCAG operability violation, and the fix would need real design input (e.g. driving the hover effect off an already-focusable parent instead of a dedicated stop) that isn't worth a review round for a 4-item list. **Revisit if:** a skill category grows meaningfully, or Gavin wants it tightened regardless.
+
+Ready for Gavin's commit approval.
 
 ### Real content, per-skill icons, ambient desktop clock — shipped, committed, pushed (2026-09-21)
 Post-M6 batch, per Gavin: real bio/skills/contact content from his old site (`gavinle_site_content.md` export of `gavinle.com`), per-skill FontAwesome brand icons with distinct colors, and a non-interactive ambient clock widget on the desktop (chosen over a richer-wallpaper-only or dock/menu-bar-only alternative, explicitly not a desktop icon per §13).
