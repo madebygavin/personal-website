@@ -1,6 +1,6 @@
 # Progress Tracker
 
-**Last updated:** 2026-09-21 by Claude (Sonnet 5), session `personal-website-fa` (PM) — M6 shipped and committed; content/UI polish pass (old-site content reuse, skill icons, desktop widget) queued next.
+**Last updated:** 2026-09-21 by Claude (Sonnet 5), session `personal-website-fa` (PM) — end-of-session checkpoint before a `/clear`: content/skill-icons/desktop-clock batch shipped and committed, Experience/Education and skills animation on hold pending Gavin, everything else idle.
 **Read this file first**, before `PROJECT_BRIEF.md`, at the start of any session. `PROJECT_BRIEF.md` is the spec (binding, changes rarely). This file is the log (changes every session) — it tells you where things actually stand right now, including things the brief can't know: what's verified, what's deviated, what's blocked, and **which session is doing what**.
 
 Status legend: ✅ Done (verified incl. visual QA) · 🟡 Code complete, **not** visually verified · 🔵 In progress · ⬜ Not started · 🔴 Blocked
@@ -75,30 +75,19 @@ When a session hits that threshold:
 
 ## 2. Currently in progress
 
-**Content/skills-icon/desktop-widget batch** — assigned to the engineer 2026-09-21 (see section 3 for scope). **Done, sent directly to the reviewer, iterating there now.** Bio, skills content + per-skill brand icons, LinkedIn, GitHub, ambient desktop clock all in and verified (lint/test/build clean, bundle <155KB gzip, 26 real-Chrome checks across EN/VI). Incidental fix: `BRAND.githubUrl` was pointing at a stale placeholder repo URL from early scaffolding, corrected to the real pushed repo.
-
-**Two open questions for Gavin, not blocking the review loop:**
-1. Skill proficiency percentages weren't in the old-site export — engineer defaulted all new real skills (CSS/HTML/JS/React, .NET/MySQL/Go/Python) to 80%, left `TODO(gavin)` in `content.ts`. Send real numbers if you have them in mind.
-2. `contact@gavinle.com` is in but still marked `TODO(gavin)` — used as best-available data per instruction not to assume it's current. Confirm if that's still your real contact email.
-
-Experience/Projects still pending your real details (section 7 item 2).
-
-**Reviewer clean 2026-09-21** (1 round, both findings fixed and re-verified, reviewer independently reran lint/test/build before/after both rounds): (1) `MenuBar` and the new `DesktopClock` were each running an independent `useClock()` interval for the same tick — `Desktop.tsx` now calls it once and passes `now` down to both; (2) per-skill brand colors on the progress-bar *fill* failed WCAG 1.4.11 non-text contrast badly in light theme (10 of 13 colors, JavaScript's yellow worst at ~1.05:1) — reverted the bar fill to the shared accent color (passes both themes), kept the distinct brand color on the icon glyph only. Final: 14/14 tests, 154.30 kB gzip. **Handed to the tester** alongside batch 1 (M6, already committed) for a combined pass.
-
-**Tester clean 2026-09-21 — no findings.** Real (non-headless) Chrome, throwaway `playwright-core` (cleanly uninstalled). All 5 targeted areas confirmed: bio/skills/contact content matches supplied copy exactly in EN, VI translation reads idiomatically (not mechanical); all 13 skill icons render correct brand icon + color (incl. `.NET`→`faCode`/MySQL→`faDatabase` fallbacks), confirmed the reviewer's contrast revert holds (every bar fill computes to the shared `--color-accent`, brand color confirmed icon-glyph-only); desktop clock excluded from Tab order, `aria-hidden` confirmed, sampled in sync with `MenuBar`'s clock (no drift); 80%-default skills and unconfirmed contact email correctly not flagged as bugs. Spot-checked M6 batch 1's `noscript` content with the new real links — still correct. Evidence in `.qa/` (`tester-m6b2-dynamic.cjs`, results JSON, 3 screenshots). **Ready for Gavin's commit approval.**
+**Nothing in progress.** Content/skill-icons/desktop-clock batch shipped and committed (`f3ddd23`) — full story archived in section 8. All four sessions idle, standing by.
 
 ## 3. Next up
 
-**Content + UI polish pass, per Gavin (2026-09-21), not yet scoped/assigned:**
-1. **Real content from Gavin's old site.** He supplied `gavinle_site_content.md` (export of `gavinle.com`) — bio, skills list (Frontend: CSS/HTML/JS/React; Backend: .NET/MySQL/Go/Python), email, GitHub, LinkedIn are usable as-is; Experience/Projects were placeholder-only in that export, Gavin is providing real details separately (watch for his next message with that content before implementing those two sections).
-2. **Per-skill icon + color in `SkillsApp.tsx`.** `@fortawesome/free-brands-svg-icons` is already installed — use real brand icons (React, JS, Python, Go, etc.) not generic placeholders. `.NET` has no dedicated FA brand icon; engineer's judgment call on a reasonable substitute.
-3. **Ambient desktop widget.** Gavin's direction (chosen over a richer-wallpaper-only or dock/menu-bar-only alternative): a non-interactive element on the desktop surface itself — e.g. a large live clock/date display or a short status/quote line. Explicitly **not** a desktop icon or a new app (PROJECT_BRIEF.md §13 bans desktop icons) — keep it decorative, no click target, no new window.
+**On hold, per Gavin (2026-09-21) — waiting on his input before assigning:**
+1. **Experience and Education real content.** Still `TODO(gavin)` placeholders — the old-site export had no real data here. Gavin is sending actual details (company/title/dates/location/achievements for work; school/degree/dates for education); forward to the engineer the moment they land.
+2. **Skills animation.** Gavin wants animation added to the Skills app; PM proposed a staggered bar-fill-in on open + subtle icon hover, respecting `prefers-reduced-motion` — pending Gavin's confirmation or a different direction before assigning.
 
-**Queued after the above, not yet assigned — brainstormed UI ideas Gavin wants to work through next:** dock icon tooltip descriptions, tactile hover/press micro-animations on dock icons and traffic lights, login-screen cursor parallax on the hardware illustration, dock-icon-origin window open/close animation, project-card hover previews, skills grouped by category (Frontend/Backend, matching the old site's structure — pairs with item 2 above), time-of-day wallpaper palette shift. Two bigger-swing ideas (boot-progress visual pulse, radial-wipe theme toggle) need explicit scope discussion before assigning, not just a routine batch.
+**Still queued after the above, not yet assigned — brainstormed UI ideas:** dock icon tooltip descriptions, tactile hover/press micro-animations on dock icons and traffic lights, login-screen cursor parallax on the hardware illustration, dock-icon-origin window open/close animation, project-card hover previews, skills grouped by category (Frontend/Backend, matching the old site's structure), time-of-day wallpaper palette shift. Two bigger-swing ideas (boot-progress visual pulse, radial-wipe theme toggle) need explicit scope discussion before assigning, not just a routine batch.
 
 Once scoped: same protocol as M1–M6 — engineer → reviewer (direct loop) → PM hands to tester once reviewer says clean → PM triages tester findings → Gavin for commit approval.
 
-Separately, still pending Gavin: whether to commit the previous session's uncommitted `PROGRESS.md` end-of-day cleanup edit (folded into this session's edits above, so now moot — this update supersedes it).
+**Open, unconfirmed data points carried forward** (not blockers, just unconfirmed): skill proficiency %s default to 80% pending real numbers; `contact@gavinle.com` is in but unconfirmed as current.
 
 ---
 
@@ -169,6 +158,17 @@ From PROJECT_BRIEF.md section 3 — Gavin should confirm or override these at re
 ---
 
 ## 8. Milestone log (detailed, append-only — newest first)
+
+### Real content, per-skill icons, ambient desktop clock — shipped, committed, pushed (2026-09-21)
+Post-M6 batch, per Gavin: real bio/skills/contact content from his old site (`gavinle_site_content.md` export of `gavinle.com`), per-skill FontAwesome brand icons with distinct colors, and a non-interactive ambient clock widget on the desktop (chosen over a richer-wallpaper-only or dock/menu-bar-only alternative, explicitly not a desktop icon per §13).
+
+**Engineer's batch — 9 files:** `content.ts` (real EN+VI bio/skills/contact copy), new `skillIcons.ts` (13 skills mapped to FA brand icons + colors, `.NET`→`faCode`/MySQL→`faDatabase` fallbacks), new `DesktopClock.tsx`, `brand.ts` (incidental fix — `githubUrl` was still pointing at a placeholder repo from early scaffolding), `index.html` (`noscript` synced to new copy), plus `SkillsApp.tsx`/`Desktop.tsx`/`MenuBar.tsx` touched for icon rendering and the clock. Skill proficiency %s (not in the old export) defaulted to 80%, `contact@gavinle.com` used as best-available but unconfirmed — both flagged `TODO(gavin)`.
+
+**Reviewer — clean after 1 round:** two findings, both fixed and re-verified: (1) `MenuBar` and `DesktopClock` were each running an independent `useClock()` interval for the same tick — deduped to one call in `Desktop.tsx`, passed down to both; (2) per-skill brand colors on the progress-bar *fill* failed WCAG 1.4.11 non-text contrast badly in light theme (10 of 13 colors, worst ~1.05:1) — reverted the fill to the shared accent color, kept the brand color on the icon glyph only.
+
+**Tester — clean, no findings.** Real Chrome via throwaway `playwright-core`. Verified: content matches supplied copy exactly (EN), VI translation reads idiomatically; all 13 skill icons render the correct icon+color including both fallbacks; confirmed the contrast revert holds (every bar fill computes to `--color-accent`); desktop clock excluded from Tab order, `aria-hidden` confirmed, sampled in sync with `MenuBar`'s clock (no drift). Evidence in `.qa/` (`tester-m6b2-*`).
+
+Committed as `f3ddd23`, pushed. Experience/Education and a Skills-app animation pass are on hold pending Gavin's input — see section 3.
 
 ### M6 (Polish, a11y, perf) — shipped, committed, pushed (2026-09-21)
 Team restarted after a reboot (new session mapping: PM `personal-website-fa`, engineer `personal-website-a4`, reviewer `personal-website-dc`, tester `personal-website-52`). PM scoped M6 from `PROJECT_BRIEF.md` §10/§12 plus two carried-over backlog items and assigned it to the engineer.
