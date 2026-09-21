@@ -3,6 +3,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faLinkedin, faGithub } from '@fortawesome/free-brands-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { useLang } from '../../hooks/useLang'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import { contactChannels, contactInfo, contactMessage, uiStrings, type ContactChannel, type Localized } from '../../data/content'
 
 const CHANNEL_ICON: Record<ContactChannel['id'], IconDefinition> = {
@@ -25,18 +26,26 @@ const CHANNEL_LABEL: Record<ContactChannel['id'], Localized<string>> = Object.fr
 // No contact form (out of scope, section 13); section 7.8.
 export function ContactApp() {
   const { t } = useLang()
+  const isMobile = useIsMobile()
 
   return (
-    <div className="flex h-full text-sm">
-      <nav aria-label={t(uiStrings.contactChannelsNavLabel)} className="w-40 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2">
-        <ul className="flex flex-col gap-1">
+    <div className={`flex h-full text-sm ${isMobile ? 'flex-col' : ''}`}>
+      <nav
+        aria-label={t(uiStrings.contactChannelsNavLabel)}
+        className={
+          isMobile
+            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--glass-border)] p-2'
+            : 'w-40 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2'
+        }
+      >
+        <ul className={isMobile ? 'flex gap-1' : 'flex flex-col gap-1'}>
           {contactChannels.map((channel) => (
-            <li key={channel.id}>
+            <li key={channel.id} className={isMobile ? 'shrink-0' : ''}>
               <a
                 href={CHANNEL_HREF[channel.id]}
                 target={channel.id === 'email' ? undefined : '_blank'}
                 rel={channel.id === 'email' ? undefined : 'noreferrer'}
-                className="flex items-center gap-2 rounded-[8px] px-2 py-1.5 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]"
+                className="flex items-center gap-2 rounded-[8px] px-2 py-1.5 whitespace-nowrap transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]"
               >
                 <FontAwesomeIcon icon={CHANNEL_ICON[channel.id]} className="w-4" />
                 {t(channel.label)}

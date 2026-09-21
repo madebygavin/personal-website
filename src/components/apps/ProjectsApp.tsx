@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolder, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { useLang } from '../../hooks/useLang'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import { projects, uiStrings, type Project } from '../../data/content'
 
 type Filter = 'all' | 'web' | 'tools'
@@ -12,6 +13,7 @@ const FILTERS: Filter[] = ['all', 'web', 'tools']
 // clicking one opens a detail view (section 7.8).
 export function ProjectsApp() {
   const { t } = useLang()
+  const isMobile = useIsMobile()
   const [filter, setFilter] = useState<Filter>('all')
   const [selected, setSelected] = useState<Project | null>(null)
 
@@ -54,18 +56,25 @@ export function ProjectsApp() {
   }
 
   return (
-    <div className="flex h-full text-sm">
-      <nav aria-label={t(uiStrings.projectFiltersNavLabel)} className="w-32 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2">
-        <ul className="flex flex-col gap-1">
+    <div className={`flex h-full text-sm ${isMobile ? 'flex-col' : ''}`}>
+      <nav
+        aria-label={t(uiStrings.projectFiltersNavLabel)}
+        className={
+          isMobile
+            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--glass-border)] p-2'
+            : 'w-32 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2'
+        }
+      >
+        <ul className={isMobile ? 'flex gap-1' : 'flex flex-col gap-1'}>
           {FILTERS.map((f) => (
-            <li key={f}>
+            <li key={f} className={isMobile ? 'shrink-0' : ''}>
               <button
                 type="button"
                 onClick={() => setFilter(f)}
                 aria-current={filter === f}
-                className={`w-full rounded-[8px] px-2 py-1.5 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
-                  filter === f ? 'bg-white/15 font-semibold' : 'hover:bg-white/10'
-                }`}
+                className={`rounded-[8px] px-2 py-1.5 text-left whitespace-nowrap transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
+                  isMobile ? '' : 'w-full'
+                } ${filter === f ? 'bg-white/15 font-semibold' : 'hover:bg-white/10'}`}
               >
                 {f === 'all' ? t(uiStrings.filterAll) : f === 'web' ? t(uiStrings.filterWeb) : t(uiStrings.filterTools)}
               </button>

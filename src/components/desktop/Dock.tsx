@@ -1,27 +1,11 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'motion/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faGear, faCalendarDays, faFolderOpen, faEnvelope } from '@fortawesome/free-solid-svg-icons'
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { usePointerFine } from '../../hooks/usePointerFine'
 import { useLang } from '../../hooks/useLang'
 import { appNames, type AppId } from '../../data/content'
-
-interface DockAppConfig {
-  id: AppId
-  icon: IconDefinition
-  gradient: string
-}
-
-// Original colors per app (section 5.4 — no Apple app icon designs).
-const DOCK_APPS: DockAppConfig[] = [
-  { id: 'about', icon: faUser, gradient: 'linear-gradient(160deg, #6ea8ff, #3b62e0)' },
-  { id: 'skills', icon: faGear, gradient: 'linear-gradient(160deg, #7de3c8, #2fae8b)' },
-  { id: 'experience', icon: faCalendarDays, gradient: 'linear-gradient(160deg, #ffb86b, #e0742f)' },
-  { id: 'projects', icon: faFolderOpen, gradient: 'linear-gradient(160deg, #ffd76b, #e0a92f)' },
-  { id: 'contact', icon: faEnvelope, gradient: 'linear-gradient(160deg, #ff8fb3, #e0407a)' },
-]
+import { APP_ICONS, type AppIconConfig } from '../../config/apps'
 
 interface DockProps {
   activeApp: AppId | null
@@ -52,7 +36,7 @@ export const Dock = forwardRef<DockHandle, DockProps>(function Dock({ activeApp,
       onMouseMove={(event) => magnify && mouseX.set(event.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
     >
-      {DOCK_APPS.map((app) => (
+      {APP_ICONS.map((app) => (
         <DockIcon
           key={app.id}
           app={app}
@@ -77,7 +61,7 @@ function DockIcon({
   onOpen,
   registerRef,
 }: {
-  app: DockAppConfig
+  app: AppIconConfig
   mouseX: MotionValue<number>
   magnify: boolean
   isActive: boolean

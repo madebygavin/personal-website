@@ -7,7 +7,18 @@ import { useEffect, useRef, type RefObject } from 'react'
 // browser's own focus movement and trap the user. Escape is handled by the
 // caller instead, since returning focus to the trigger only makes sense
 // there (see LogoMenu/ControlCenter).
-export function useDismissablePopover<T extends HTMLElement>(open: boolean, onDismiss: () => void): RefObject<T | null> {
+//
+// `extraContainerRef` is for a panel that's portaled outside `containerRef`'s
+// DOM subtree (ControlCenter's mobile bottom sheet, portaled to escape a
+// `backdrop-filter` ancestor's fixed-position containing block) — without
+// it, a portaled panel's own clicks/focus would look "outside" and
+// self-dismiss immediately. Omit it when trigger and panel share one
+// subtree (LogoMenu, ControlCenter's desktop panel).
+export function useDismissablePopover<T extends HTMLElement>(
+  open: boolean,
+  onDismiss: () => void,
+  extraContainerRef?: RefObject<HTMLElement | null>,
+): RefObject<T | null> {
   const containerRef = useRef<T>(null)
 
   useEffect(() => {
@@ -15,26 +26,29 @@ export function useDismissablePopover<T extends HTMLElement>(open: boolean, onDi
     const container = containerRef.current
     if (!container) return
 
+    function isInside(node: Node | null) {
+      if (!node) return false
+      return Boolean(containerRef.current?.contains(node) || extraContainerRef?.current?.contains(node))
+    }
+
     function handlePointerDown(event: PointerEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        onDismiss()
-      }
+      if (!isInside(event.target as Node)) onDismiss()
     }
 
     function handleFocusOut(event: FocusEvent) {
-      const next = event.relatedTarget as Node | null
-      if (!next || !containerRef.current?.contains(next)) {
-        onDismiss()
-      }
+      if (!isInside(event.relatedTarget as Node | null)) onDismiss()
     }
 
+    const extraContainer = extraContainerRef?.current
     document.addEventListener('pointerdown', handlePointerDown)
     container.addEventListener('focusout', handleFocusOut)
+    extraContainer?.addEventListener('focusout', handleFocusOut)
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
       container.removeEventListener('focusout', handleFocusOut)
+      extraContainer?.removeEventListener('focusout', handleFocusOut)
     }
-  }, [open, onDismiss])
+  }, [open, onDismiss, extraContainerRef])
 
   return containerRef
 }

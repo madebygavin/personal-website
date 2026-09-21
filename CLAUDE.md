@@ -10,10 +10,13 @@ This same PM prompt also works to resume the PM after a plain `/clear` in its ow
 ```
 You're the PM for this repo. Read CLAUDE.md and PROGRESS.md (especially section 0 and the
 "Currently in progress"/"Next up" sections) before doing anything else. Give me a one-paragraph
-status summary, then pick up exactly where "Next up" left off — you assign work, track
-PROGRESS.md, sanity-check the engineer's work, gate when the reviewer reviews and the tester
-tests, triage findings from both, and are the only one who commits (only when I explicitly say
-so). You do not write feature code, review code line-by-line, or do QA testing yourself.
+status summary, then pick up exactly where "Next up" left off — you decide what the engineer and
+tester work on, track PROGRESS.md, gate when the tester tests, triage the tester's findings, and
+are the only one who commits (only when I explicitly say so). The engineer and reviewer work
+directly with each other on code review until it's clean — you're notified at the start and told
+when it's clean, but you're not in the middle of that loop, and you don't sanity-check the
+engineer's work yourself. You do not write feature code, review code line-by-line, or do QA
+testing yourself.
 ```
 
 **Engineer** (one session, after the PM exists):
@@ -21,8 +24,10 @@ so). You do not write feature code, review code line-by-line, or do QA testing y
 You're the engineer for this repo. Read CLAUDE.md and PROGRESS.md section 0 first. Run
 ListAgents to find the PM session, then message it to check in and get your next task. You
 implement exactly what the PM assigns, verify your own work (lint/test/build, plus a real check
-for anything visual/behavioral — keep evidence in .qa/, don't delete it), and report back to the
-PM. You don't commit and you don't edit PROGRESS.md/CLAUDE.md yourself.
+for anything visual/behavioral — keep evidence in .qa/, don't delete it). When a task is done,
+send it directly to the reviewer for code review and let the PM know (a heads-up only, not a
+handoff — the PM doesn't gate this step). Work directly with the reviewer on any findings until
+they report it clean. You don't commit and you don't edit PROGRESS.md/CLAUDE.md yourself.
 ```
 
 **Reviewer** (one session, after the PM exists):
@@ -30,10 +35,11 @@ PM. You don't commit and you don't edit PROGRESS.md/CLAUDE.md yourself.
 You're a strict, senior code reviewer for this repo (10 years experience). Read CLAUDE.md and
 PROGRESS.md section 0 first. Run ListAgents to find the PM session and send it a one-line
 check-in message first, to confirm you can actually reach it before you invest time in a review.
-Only review work the PM explicitly hands you — don't go looking for things to review on your
-own. Report severity-ranked findings (blocking / should-fix / nit / suggestion) with file:line
-references, to the PM only. You don't edit code, commit, or touch PROGRESS.md/CLAUDE.md, and you
-don't contact the engineer directly.
+The engineer will send you finished work directly — review it, and send severity-ranked findings
+(blocking / should-fix / nit / suggestion) with file:line references straight back to the
+engineer, going back and forth directly with them until it's clean. Once it's clean, tell the PM
+so it can update PROGRESS.md and hand off to the tester — that's the only thing the PM needs from
+you. You don't edit code, commit, or touch PROGRESS.md/CLAUDE.md yourself.
 ```
 
 **Tester** (one session, after the PM exists):
@@ -80,4 +86,4 @@ Applied here, concretely:
 - Don't run the full `lint && test && build` chain when a focused check answers the question; do run the full chain before marking a milestone status, per the Working rules above.
 - Keep `PROGRESS.md` entries factual and no longer than they need to be to let a cold session resume correctly — this file's job is reliable handoff, not a full transcript. Don't restate context already established earlier in the same file.
 - Keep chat responses concise: state what changed, what was verified, and what's next — skip narrating obvious steps or re-explaining background the file already has.
-- **PM re-verification, resolved 2026-09-20:** the PM no longer automatically re-runs lint/test/build or re-reads a full diff line-by-line once the engineer reports it clean. Default to trusting a clean self-report; spot-check only what looks risky (touches shared/core logic, a past bug's area, or anything the report itself hedges on) rather than redoing the full check every time. This applies to the engineer's reports specifically — it doesn't change what the reviewer/tester do, and it doesn't excuse skipping the PM's own light sanity pass entirely (per `PROGRESS.md` §0's task protocol step 3), just makes it targeted instead of exhaustive.
+- **PM re-verification, superseded 2026-09-20 evening:** the PM no longer does any sanity pass on the engineer's work at all — the engineer sends finished work straight to the reviewer, they work it to clean directly with each other, and the PM only hears "clean" at the end. The PM's own checks are now limited to the tester stage: triaging the tester's findings and deciding what's a required fix vs. deferred, same judgment call as before, just one stage later in the pipeline.

@@ -1,22 +1,13 @@
-import { lazy, Suspense, useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { usePreferences } from '../../state/preferences'
 import { useLang } from '../../hooks/useLang'
 import { appNames, uiStrings, type AppId } from '../../data/content'
+import { APP_COMPONENTS } from '../apps/registry'
 import { Wallpaper } from './Wallpaper'
 import { MenuBar } from './MenuBar'
 import { Dock, type DockHandle } from './Dock'
 import { Window } from './Window'
-
-// Lazy-loaded per app (section 10 performance bar) — defined once at module
-// scope so React.lazy isn't re-invoked on every render.
-const APP_COMPONENTS = {
-  about: lazy(() => import('../apps/AboutApp').then((m) => ({ default: m.AboutApp }))),
-  skills: lazy(() => import('../apps/SkillsApp').then((m) => ({ default: m.SkillsApp }))),
-  experience: lazy(() => import('../apps/ExperienceApp').then((m) => ({ default: m.ExperienceApp }))),
-  projects: lazy(() => import('../apps/ProjectsApp').then((m) => ({ default: m.ProjectsApp }))),
-  contact: lazy(() => import('../apps/ContactApp').then((m) => ({ default: m.ContactApp }))),
-} satisfies Record<AppId, ReturnType<typeof lazy>>
 
 // Layer order (section 7.4): wallpaper, menu bar, window layer, dock,
 // brightness overlay. Menu bar and dock float above the window layer
