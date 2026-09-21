@@ -2,19 +2,27 @@ import { Suspense, useRef, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { usePreferences } from '../../state/preferences'
 import { useLang } from '../../hooks/useLang'
+import { useClock } from '../../hooks/useClock'
 import { appNames, uiStrings, type AppId } from '../../data/content'
 import { APP_COMPONENTS } from '../apps/registry'
 import { Wallpaper } from './Wallpaper'
+import { DesktopClock } from './DesktopClock'
 import { MenuBar } from './MenuBar'
 import { Dock, type DockHandle } from './Dock'
 import { Window } from './Window'
 
 // Layer order (section 7.4): wallpaper, menu bar, window layer, dock,
 // brightness overlay. Menu bar and dock float above the window layer
-// (section 7.5: "sits above windows").
+// (section 7.5: "sits above windows"). DesktopClock is an addition on top
+// of section 7.4's original list (decorative ambient widget, not a new
+// app/icon — see its own file) — sits just above the wallpaper (z-0) so the
+// window layer (z-10) still covers it like a real desktop widget.
 export function Desktop() {
   const { brightness } = usePreferences()
   const { t } = useLang()
+  // One shared tick for both MenuBar and DesktopClock (see their own
+  // comments) rather than each calling useClock() independently.
+  const now = useClock()
   const [activeApp, setActiveApp] = useState<AppId | null>(null)
   const dockRef = useRef<DockHandle>(null)
   const windowAreaRef = useRef<HTMLDivElement>(null)
@@ -31,7 +39,8 @@ export function Desktop() {
   return (
     <div className="relative h-full w-full overflow-hidden">
       <Wallpaper />
-      <MenuBar activeApp={activeApp} />
+      <DesktopClock now={now} />
+      <MenuBar activeApp={activeApp} now={now} />
 
       {/* Free area between the menu bar and dock — also the drag boundary
           for the open window (section 7.7). */}

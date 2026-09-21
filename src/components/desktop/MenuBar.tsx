@@ -1,4 +1,3 @@
-import { useClock } from '../../hooks/useClock'
 import { useLang } from '../../hooks/useLang'
 import { formatClock, formatDate } from '../../utils/format'
 import { appNames, uiStrings, type AppId } from '../../data/content'
@@ -7,11 +6,15 @@ import { ControlCenter } from './ControlCenter'
 
 interface MenuBarProps {
   activeApp: AppId | null
+  // Passed down from Desktop.tsx rather than calling useClock() here, so
+  // MenuBar and DesktopClock share one setInterval/tick instead of running
+  // two independent ones for the same wall-clock second (reviewer's M6
+  // batch-2 finding).
+  now: Date
 }
 
 // Glass bar, full width, sits above windows (section 7.5).
-export function MenuBar({ activeApp }: MenuBarProps) {
-  const now = useClock()
+export function MenuBar({ activeApp, now }: MenuBarProps) {
   const { t, lang } = useLang()
 
   const activeLabel = activeApp ? t(appNames[activeApp]) : t(uiStrings.desktopLabel)

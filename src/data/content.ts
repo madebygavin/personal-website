@@ -61,14 +61,15 @@ export interface AboutNote {
   body: Localized<string>
 }
 
-// TODO(gavin): replace with your real bio, interests, and fun facts.
+// Bio is real (from gavinle.com). Interests and fun facts are still
+// TODO(gavin) — no real content for those yet.
 export const aboutNotes: AboutNote[] = [
   {
     id: 'bio',
     title: { en: 'Bio', vi: 'Tiểu sử' },
     body: {
-      en: "Hi, I'm Gavin — a software developer who likes building clean, fast interfaces and the systems behind them. This bio is a placeholder; real details are coming soon.",
-      vi: 'Xin chào, mình là Gavin — một lập trình viên thích xây dựng giao diện gọn gàng, nhanh chóng cùng những hệ thống phía sau. Đây là tiểu sử tạm thời, nội dung thật sẽ sớm được cập nhật.',
+      en: 'A software engineer specialising in .NET, Go, and modern web technologies. I build clean, reliable, and scalable applications. I am a dedicated software engineer with strong expertise in the .NET Framework, exceptional teamwork skills, and a proven ability to quickly learn and adapt to new technologies. I thrive in collaborative environments, bringing excellent communication and problem-solving abilities to deliver high-quality software solutions. Whether building robust applications or optimizing existing systems, I am passionate about creating impactful results and exceeding expectations.',
+      vi: 'Mình là một kỹ sư phần mềm chuyên về .NET, Go và các công nghệ web hiện đại. Mình xây dựng những ứng dụng gọn gàng, đáng tin cậy và có khả năng mở rộng tốt. Mình có thế mạnh vững chắc về .NET Framework, kỹ năng làm việc nhóm xuất sắc, cùng khả năng học hỏi và thích nghi nhanh với công nghệ mới. Mình phát huy tốt trong môi trường làm việc hợp tác, mang đến khả năng giao tiếp và giải quyết vấn đề tốt để tạo ra các giải pháp phần mềm chất lượng cao. Dù là xây dựng ứng dụng vững chắc hay tối ưu hệ thống hiện có, mình luôn đam mê tạo ra kết quả có giá trị thực sự và vượt kỳ vọng.',
     },
   },
   {
@@ -101,7 +102,10 @@ export interface SkillCategory {
   skills: Skill[]
 }
 
-// TODO(gavin): replace with your real skill set and levels.
+// Frontend and Backend are real (from gavinle.com) — Languages and Tools
+// still have no real replacement, so they stay as-was pending Gavin.
+// TODO(gavin): confirm real proficiency levels for Frontend/Backend — none
+// were given, every entry below defaults to 80.
 export const skillCategories: SkillCategory[] = [
   {
     id: 'languages',
@@ -117,20 +121,20 @@ export const skillCategories: SkillCategory[] = [
     id: 'frontend',
     label: { en: 'Frontend', vi: 'Frontend' },
     skills: [
-      { name: 'React', level: 90 },
-      { name: 'Tailwind CSS', level: 85 },
-      { name: 'Framer Motion', level: 70 },
-      { name: 'Vite', level: 80 },
+      { name: 'CSS', level: 80 },
+      { name: 'HTML', level: 80 },
+      { name: 'JavaScript', level: 80 },
+      { name: 'React', level: 80 },
     ],
   },
   {
     id: 'backend',
     label: { en: 'Backend', vi: 'Backend' },
     skills: [
-      { name: 'Node.js', level: 85 },
-      { name: 'PostgreSQL', level: 70 },
-      { name: 'REST APIs', level: 85 },
-      { name: 'GraphQL', level: 60 },
+      { name: '.NET (VB.NET / C#)', level: 80 },
+      { name: 'MySQL', level: 80 },
+      { name: 'Go', level: 80 },
+      { name: 'Python', level: 80 },
     ],
   },
   {
@@ -277,14 +281,16 @@ export const contactChannels: ContactChannel[] = [
   { id: 'github', label: { en: 'GitHub', vi: 'GitHub' } },
 ]
 
-// TODO(gavin): replace with your real contact links.
+// LinkedIn and GitHub are real (from gavinle.com). Email is real but
+// TODO(gavin): confirm contact@gavinle.com is still current — carried over
+// from the old site's export, not independently confirmed.
 export const contactInfo = {
-  email: 'gavin@example.com',
-  linkedinUrl: 'https://www.linkedin.com/in/gavin-example',
-  githubUrl: 'https://github.com/gavin-example',
+  email: 'contact@gavinle.com',
+  linkedinUrl: 'https://www.linkedin.com/in/gavin-le',
+  githubUrl: 'https://github.com/madebygavin',
 }
 
 export const contactMessage: Localized<string> = {
-  en: 'Thanks for stopping by — feel free to reach out through any of these. This message is a placeholder until real content is in.',
-  vi: 'Cảm ơn bạn đã ghé thăm — hãy liên hệ qua bất kỳ kênh nào bên dưới. Đây là nội dung tạm thời cho đến khi có nội dung thật.',
+  en: "Feel free to reach out — whether it's a job opportunity, collaboration, or just a hello!",
+  vi: 'Đừng ngại liên hệ với mình — dù là cơ hội việc làm, hợp tác, hay chỉ đơn giản là một lời chào!',
 }

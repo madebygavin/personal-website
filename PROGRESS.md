@@ -75,7 +75,17 @@ When a session hits that threshold:
 
 ## 2. Currently in progress
 
-**Nothing in progress.** M6 (Polish, a11y, perf) shipped and is committed/pushed — full story archived in section 8. All four sessions are idle, standing by for the next assignment (content/UI work, see section 3).
+**Content/skills-icon/desktop-widget batch** — assigned to the engineer 2026-09-21 (see section 3 for scope). **Done, sent directly to the reviewer, iterating there now.** Bio, skills content + per-skill brand icons, LinkedIn, GitHub, ambient desktop clock all in and verified (lint/test/build clean, bundle <155KB gzip, 26 real-Chrome checks across EN/VI). Incidental fix: `BRAND.githubUrl` was pointing at a stale placeholder repo URL from early scaffolding, corrected to the real pushed repo.
+
+**Two open questions for Gavin, not blocking the review loop:**
+1. Skill proficiency percentages weren't in the old-site export — engineer defaulted all new real skills (CSS/HTML/JS/React, .NET/MySQL/Go/Python) to 80%, left `TODO(gavin)` in `content.ts`. Send real numbers if you have them in mind.
+2. `contact@gavinle.com` is in but still marked `TODO(gavin)` — used as best-available data per instruction not to assume it's current. Confirm if that's still your real contact email.
+
+Experience/Projects still pending your real details (section 7 item 2).
+
+**Reviewer clean 2026-09-21** (1 round, both findings fixed and re-verified, reviewer independently reran lint/test/build before/after both rounds): (1) `MenuBar` and the new `DesktopClock` were each running an independent `useClock()` interval for the same tick — `Desktop.tsx` now calls it once and passes `now` down to both; (2) per-skill brand colors on the progress-bar *fill* failed WCAG 1.4.11 non-text contrast badly in light theme (10 of 13 colors, JavaScript's yellow worst at ~1.05:1) — reverted the bar fill to the shared accent color (passes both themes), kept the distinct brand color on the icon glyph only. Final: 14/14 tests, 154.30 kB gzip. **Handed to the tester** alongside batch 1 (M6, already committed) for a combined pass.
+
+**Tester clean 2026-09-21 — no findings.** Real (non-headless) Chrome, throwaway `playwright-core` (cleanly uninstalled). All 5 targeted areas confirmed: bio/skills/contact content matches supplied copy exactly in EN, VI translation reads idiomatically (not mechanical); all 13 skill icons render correct brand icon + color (incl. `.NET`→`faCode`/MySQL→`faDatabase` fallbacks), confirmed the reviewer's contrast revert holds (every bar fill computes to the shared `--color-accent`, brand color confirmed icon-glyph-only); desktop clock excluded from Tab order, `aria-hidden` confirmed, sampled in sync with `MenuBar`'s clock (no drift); 80%-default skills and unconfirmed contact email correctly not flagged as bugs. Spot-checked M6 batch 1's `noscript` content with the new real links — still correct. Evidence in `.qa/` (`tester-m6b2-dynamic.cjs`, results JSON, 3 screenshots). **Ready for Gavin's commit approval.**
 
 ## 3. Next up
 
