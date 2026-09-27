@@ -29,15 +29,22 @@ export function useDismissablePopover<T extends HTMLElement>(
 
     function isInside(node: Node | null) {
       if (!node) return false
-      return Boolean(containerRef.current?.contains(node) || extraContainerRef?.current?.contains(node))
+      return Boolean(
+        containerRef.current?.contains(node) || extraContainerRef?.current?.contains(node),
+      )
     }
 
     function handlePointerDown(event: PointerEvent) {
       if (!isInside(event.target as Node)) onDismiss()
     }
 
+    // A null relatedTarget means focus went nowhere (e.g. Safari and Firefox
+    // don't focus a button on tap/click), not that it left the popover, so
+    // only a move to a different, outside element dismisses. Outside taps are
+    // covered by the pointerdown handler above.
     function handleFocusOut(event: FocusEvent) {
-      if (!isInside(event.relatedTarget as Node | null)) onDismiss()
+      const next = event.relatedTarget as Node | null
+      if (next && !isInside(next)) onDismiss()
     }
 
     const extraContainer = extraContainerRef?.current
