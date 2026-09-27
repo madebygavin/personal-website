@@ -52,7 +52,11 @@ export function Desktop() {
           {activeApp && ActiveAppComponent && (
             <Window key={activeApp} title={t(appNames[activeApp])} constraintsRef={windowAreaRef} onClose={handleCloseWindow}>
               <Suspense
-                fallback={<div className="flex h-full items-center justify-center text-sm opacity-70">{t(uiStrings.loading)}</div>}
+                fallback={
+                  <div className="flex h-full items-center justify-center text-sm text-[var(--color-ink-subtle)]">
+                    {t(uiStrings.loading)}
+                  </div>
+                }
               >
                 <ActiveAppComponent />
               </Suspense>

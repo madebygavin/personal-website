@@ -32,7 +32,10 @@ export function HomeScreen() {
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <Wallpaper />
 
-      <div className="glass-panel relative z-10 flex h-12 shrink-0 items-center justify-between px-4 text-sm">
+      <div
+        className="glass-panel relative z-10 flex h-12 shrink-0 items-center justify-between px-4 text-sm"
+        style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(3rem + env(safe-area-inset-top))' }}
+      >
         <span className="tabular-nums font-medium">{formatClock(now, lang)}</span>
         <ControlCenter />
       </div>

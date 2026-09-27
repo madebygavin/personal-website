@@ -27,8 +27,8 @@ export function SkillsApp() {
         aria-label={t(uiStrings.skillCategoriesNavLabel)}
         className={
           isMobile
-            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--glass-border)] p-2'
-            : 'w-40 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2'
+            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
+            : 'w-40 shrink-0 overflow-y-auto border-r border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
         }
       >
         <ul className={isMobile ? 'flex gap-1' : 'flex flex-col gap-1'}>
@@ -38,9 +38,13 @@ export function SkillsApp() {
                 type="button"
                 onClick={() => setSelectedId(category.id)}
                 aria-current={category.id === selectedId}
-                className={`rounded-[8px] px-2 py-1.5 text-left whitespace-nowrap transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
+                className={`rounded-[var(--radius-control)] px-2 py-1.5 text-left whitespace-nowrap transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
                   isMobile ? '' : 'w-full'
-                } ${category.id === selectedId ? 'bg-white/15 font-semibold' : 'hover:bg-white/10'}`}
+                } ${
+                  category.id === selectedId
+                    ? 'bg-[var(--color-surface-3)] font-semibold'
+                    : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-3)] hover:text-[var(--color-ink)]'
+                }`}
               >
                 {t(category.label)}
               </button>
@@ -49,7 +53,7 @@ export function SkillsApp() {
         </ul>
       </nav>
       <div className="flex-1 overflow-y-auto p-4">
-        <h3 className="mb-3 text-base font-semibold">{t(selected.label)}</h3>
+        <h3 className="mb-3 text-[17px] leading-tight font-semibold tracking-[-0.1px]">{t(selected.label)}</h3>
         <ul className="flex flex-col gap-3">
           {selected.skills.map((skill, index) => {
             const { icon, color } = SKILL_ICONS[skill.name] ?? DEFAULT_SKILL_ICON
@@ -68,7 +72,7 @@ export function SkillsApp() {
                     <FontAwesomeIcon icon={icon} style={{ color }} className="w-4 text-sm" aria-hidden="true" />
                   </span>
                   <span className="flex-1">{skill.name}</span>
-                  <span className="text-xs opacity-70">{skill.level}%</span>
+                  <span className="text-xs text-[var(--color-ink-subtle)] tabular-nums">{skill.level}%</span>
                 </div>
                 <div
                   role="progressbar"
@@ -76,7 +80,7 @@ export function SkillsApp() {
                   aria-valuenow={skill.level}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  className="h-1.5 w-full overflow-hidden rounded-full bg-black/10"
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-3)]"
                 >
                   {/* Uses the app's single accent color, not the per-skill
                       brand color above — checked the actual numbers (same
@@ -89,13 +93,16 @@ export function SkillsApp() {
                       themes (light 3.51:1, dark 6.67:1), and the distinct
                       color stays on the icon glyph only.
                       aria-valuenow above always reflects the real, final
-                      skill.level — the fill's width animation (below) is
-                      purely visual and never drives the accessible value. */}
+                      skill.level — the fill's scaleX animation (below) is
+                      purely visual and never drives the accessible value.
+                      Animates transform: scaleX instead of width (Web
+                      Interface Guidelines: compositor-only properties) —
+                      origin-left so it still reads as growing left-to-right. */}
                   <motion.div
                     key={selectedId}
-                    className="h-full rounded-full bg-[var(--color-accent)]"
-                    initial={{ width: reducedMotion ? `${skill.level}%` : 0 }}
-                    animate={{ width: `${skill.level}%` }}
+                    className="h-full w-full origin-left rounded-full bg-[var(--color-accent)]"
+                    initial={{ scaleX: reducedMotion ? skill.level / 100 : 0 }}
+                    animate={{ scaleX: skill.level / 100 }}
                     transition={{
                       duration: reducedMotion ? 0 : BAR_FILL_DURATION,
                       delay: reducedMotion ? 0 : index * BAR_STAGGER_STEP,

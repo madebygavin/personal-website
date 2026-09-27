@@ -29,10 +29,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         aria-label={t(uiStrings.login)}
         className="h-20 w-20 overflow-hidden rounded-full transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] sm:h-24 sm:w-24"
       >
-        <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+        <img src={avatarUrl} alt="" width={96} height={96} className="h-full w-full object-cover" />
       </button>
 
-      <div className="text-lg font-semibold">{profile.name}</div>
+      <div className="text-[40px] leading-tight font-semibold tracking-[-0.5px]">{profile.name}</div>
       <div className="text-sm opacity-70">{t(profile.title)}</div>
 
       <div className="mt-3 text-3xl font-light tabular-nums">{formatClock(now, lang)}</div>

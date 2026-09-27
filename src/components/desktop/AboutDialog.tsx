@@ -52,7 +52,7 @@ export function AboutDialog({ open, onClose }: AboutDialogProps) {
         className="glass-panel w-full max-w-sm rounded-[var(--radius-window)] p-5 text-sm"
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 id={titleId} className="text-base font-semibold">
+          <h2 id={titleId} className="text-[22px] leading-tight font-semibold tracking-[-0.2px]">
             {BRAND.siteName}
           </h2>
           <button
@@ -60,12 +60,12 @@ export function AboutDialog({ open, onClose }: AboutDialogProps) {
             type="button"
             aria-label={t(uiStrings.close)}
             onClick={onClose}
-            className="rounded-full px-2 py-1 text-xs transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+            className="rounded-full px-2 py-1 text-xs transition hover:bg-[var(--color-surface-3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
-        <p className="mt-3 opacity-80">{t(uiStrings.builtWith)}</p>
+        <p className="mt-3 text-[var(--color-ink-muted)]">{t(uiStrings.builtWith)}</p>
         <a
           href={BRAND.githubUrl}
           target="_blank"

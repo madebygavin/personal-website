@@ -59,31 +59,34 @@ export function Window({ title, constraintsRef, onClose, children }: WindowProps
     >
       <div
         onPointerDown={(event) => dragControls.start(event)}
-        className="relative flex h-9 shrink-0 items-center justify-center border-b border-[var(--glass-border)] px-3"
+        className="relative flex h-9 shrink-0 items-center justify-center border-b border-[var(--color-hairline)] px-3"
       >
+        {/* Monochrome dots, not the literal macOS traffic-light colors (DESIGN.md):
+            only the working close button tints on hover/focus; the two permanently
+            disabled controls never gain color. */}
         <div className="absolute left-3 flex items-center gap-1.5" onPointerDown={(event) => event.stopPropagation()}>
           <button
             type="button"
             aria-label={t(uiStrings.close)}
             onClick={onClose}
-            className="h-3 w-3 rounded-full bg-[#ff5f57] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+            className="h-3 w-3 rounded-full bg-[var(--color-ink-tertiary)] transition hover:bg-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
           />
           <button
             type="button"
             aria-label={t(uiStrings.minimize)}
             disabled
-            className="h-3 w-3 cursor-default rounded-full bg-[#ffbd2e] opacity-40"
+            className="h-3 w-3 cursor-default rounded-full bg-[var(--color-ink-tertiary)] opacity-40"
           />
           <button
             type="button"
             aria-label={t(uiStrings.maximize)}
             disabled
-            className="h-3 w-3 cursor-default rounded-full bg-[#28c840] opacity-40"
+            className="h-3 w-3 cursor-default rounded-full bg-[var(--color-ink-tertiary)] opacity-40"
           />
         </div>
-        <span id={titleId} className="text-xs font-semibold">
+        <h2 id={titleId} className="m-0 text-[22px] leading-tight font-semibold tracking-[-0.2px]">
           {title}
-        </span>
+        </h2>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">{children}</div>
     </motion.div>

@@ -1,21 +1,41 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 
+/* Token system: see DESIGN.md. A 4-step surface ladder (canvas -> surface-1 ->
+   surface-2 -> surface-3) plus a 4-step text ladder (ink -> ink-muted ->
+   ink-subtle -> ink-tertiary) replace the old single glass color + ad hoc
+   bg-white/10 / opacity-70 utility classes scattered per component. The
+   accent hue itself is unchanged from before this redesign pass. */
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg-base: #0b0c10;
-  --color-text: rgb(255 255 255 / 90%);
-  --color-accent: #5b9dff;
+  --color-canvas: #08090b;
+  --color-surface-1: #111318;
+  --color-surface-2: #161920;
+  --color-surface-3: #1c1f27;
+  --color-hairline: rgb(255 255 255 / 10%);
+  --color-hairline-strong: rgb(255 255 255 / 16%);
 
-  --glass-bg: rgb(30 32 38 / 60%);
-  --glass-border: rgb(255 255 255 / 12%);
+  --color-ink: rgb(255 255 255 / 92%);
+  --color-ink-muted: rgb(255 255 255 / 70%);
+  --color-ink-subtle: rgb(255 255 255 / 50%);
+  --color-ink-tertiary: rgb(255 255 255 / 32%);
+
+  --color-accent: #5b9dff;
+  --color-accent-hover: #7fb2ff;
+  --color-accent-pressed: #4a86e0;
+  --color-accent-soft: rgb(91 157 255 / 14%);
+
+  /* Back-compat aliases: .glass-panel below still reads these names. */
+  --color-text: var(--color-ink);
+  --glass-bg: rgb(17 19 24 / 64%);
+  --glass-border: var(--color-hairline);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 40%);
   --glass-highlight: rgb(255 255 255 / 8%);
-  --glass-bg-solid: #1c1e24;
+  --glass-bg-solid: var(--color-surface-1);
 
-  --wallpaper-base: #101114;
+  --wallpaper-base: var(--color-canvas);
   --wallpaper-a: rgb(255 255 255 / 5%);
   --wallpaper-b: rgb(255 255 255 / 9%);
 }
@@ -23,27 +43,42 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  --color-bg-base: #e8e9ec;
-  --color-text: rgb(20 20 22 / 90%);
-  --color-accent: #2f6fe0;
+  --color-canvas: #eef0f3;
+  --color-surface-1: #f7f8fa;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #e9ecf1;
+  --color-hairline: rgb(0 0 0 / 9%);
+  --color-hairline-strong: rgb(0 0 0 / 14%);
 
-  --glass-bg: rgb(255 255 255 / 65%);
-  --glass-border: rgb(0 0 0 / 8%);
+  --color-ink: rgb(15 17 21 / 92%);
+  --color-ink-muted: rgb(15 17 21 / 70%);
+  --color-ink-subtle: rgb(15 17 21 / 50%);
+  --color-ink-tertiary: rgb(15 17 21 / 32%);
+
+  --color-accent: #2f6fe0;
+  --color-accent-hover: #4b83ea;
+  --color-accent-pressed: #2559b8;
+  --color-accent-soft: rgb(47 111 224 / 10%);
+
+  --color-text: var(--color-ink);
+  --glass-bg: rgb(247 248 250 / 68%);
+  --glass-border: var(--color-hairline);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 12%);
   --glass-highlight: rgb(255 255 255 / 60%);
-  --glass-bg-solid: #eef0f2;
+  --glass-bg-solid: var(--color-surface-1);
 
-  --wallpaper-base: #eceeef;
+  --wallpaper-base: var(--color-canvas);
   --wallpaper-a: rgb(0 0 0 / 4%);
   --wallpaper-b: rgb(0 0 0 / 7%);
 }
 
-/* Radii (section 9): window 16-20px, dock 24px, dock icons 14-16px, controls 10px */
+/* Radii (see DESIGN.md): a 4-step scale everything maps to, replacing three
+   previously ad hoc values. */
 :root {
-  --radius-window: 18px;
-  --radius-dock: 24px;
-  --radius-dock-icon: 15px;
-  --radius-control: 10px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-window: 16px;
+  --radius-dock: 9999px;
 }
 
 html,
@@ -54,7 +89,7 @@ body,
 
 body {
   margin: 0;
-  background: var(--color-bg-base);
+  background: var(--color-canvas);
   color: var(--color-text);
   font-family: 'Inter Variable', sans-serif;
 }

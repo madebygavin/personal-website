@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFolder, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { useLang } from '../../hooks/useLang'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { projects, uiStrings, type Project } from '../../data/content'
+import { DEFAULT_PROJECT_ICON, PROJECT_ICONS } from '../../config/projectIcons'
 
 type Filter = 'all' | 'web' | 'tools'
 
@@ -25,15 +26,18 @@ export function ProjectsApp() {
         <button
           type="button"
           onClick={() => setSelected(null)}
-          className="mb-3 flex items-center gap-1.5 rounded-[8px] px-1 py-0.5 text-xs opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+          className="mb-3 flex items-center gap-1.5 rounded-[var(--radius-control)] px-1 py-0.5 text-xs text-[var(--color-ink-subtle)] transition hover:text-[var(--color-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
         >
           <FontAwesomeIcon icon={faArrowLeft} /> {t(uiStrings.back)}
         </button>
-        <h3 className="text-base font-semibold">{selected.name}</h3>
-        <p className="mt-2 leading-relaxed opacity-90">{t(selected.summary)}</p>
+        <h3 className="text-[17px] leading-tight font-semibold tracking-[-0.1px]">{selected.name}</h3>
+        <p className="mt-2 leading-relaxed text-[var(--color-ink-muted)]">{t(selected.summary)}</p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {selected.tech.map((tech) => (
-            <span key={tech} className="rounded-full bg-black/10 px-2 py-0.5 text-xs">
+            <span
+              key={tech}
+              className="rounded-full bg-[var(--color-surface-3)] px-2 py-0.5 text-xs text-[var(--color-ink-muted)]"
+            >
               {tech}
             </span>
           ))}
@@ -61,8 +65,8 @@ export function ProjectsApp() {
         aria-label={t(uiStrings.projectFiltersNavLabel)}
         className={
           isMobile
-            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--glass-border)] p-2'
-            : 'w-32 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2'
+            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
+            : 'w-32 shrink-0 overflow-y-auto border-r border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
         }
       >
         <ul className={isMobile ? 'flex gap-1' : 'flex flex-col gap-1'}>
@@ -72,9 +76,13 @@ export function ProjectsApp() {
                 type="button"
                 onClick={() => setFilter(f)}
                 aria-current={filter === f}
-                className={`rounded-[8px] px-2 py-1.5 text-left whitespace-nowrap transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
+                className={`rounded-[var(--radius-control)] px-2 py-1.5 text-left whitespace-nowrap transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] ${
                   isMobile ? '' : 'w-full'
-                } ${filter === f ? 'bg-white/15 font-semibold' : 'hover:bg-white/10'}`}
+                } ${
+                  filter === f
+                    ? 'bg-[var(--color-surface-3)] font-semibold'
+                    : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-3)] hover:text-[var(--color-ink)]'
+                }`}
               >
                 {f === 'all' ? t(uiStrings.filterAll) : f === 'web' ? t(uiStrings.filterWeb) : t(uiStrings.filterTools)}
               </button>
@@ -84,17 +92,26 @@ export function ProjectsApp() {
       </nav>
       <div className="flex-1 overflow-y-auto p-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {filtered.map((project) => (
-            <button
-              key={project.id}
-              type="button"
-              onClick={() => setSelected(project)}
-              className="flex flex-col items-center gap-1.5 rounded-[10px] p-2 text-center transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
-            >
-              <FontAwesomeIcon icon={faFolder} className="text-3xl text-[var(--color-accent)]" />
-              <span className="text-xs">{project.name}</span>
-            </button>
-          ))}
+          {filtered.map((project) => {
+            const { icon, gradient } = PROJECT_ICONS[project.id] ?? DEFAULT_PROJECT_ICON
+            return (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setSelected(project)}
+                className="flex flex-col items-center gap-1.5 rounded-[var(--radius-card)] p-2 text-center transition hover:bg-[var(--color-surface-3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+              >
+                <span
+                  aria-hidden="true"
+                  style={{ backgroundImage: gradient }}
+                  className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] text-xl text-white shadow-md"
+                >
+                  <FontAwesomeIcon icon={icon} />
+                </span>
+                <span className="text-xs text-[var(--color-ink-muted)]">{project.name}</span>
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>

@@ -8,9 +8,9 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 import { uiStrings } from '../../data/content'
 import { useDismissablePopover } from '../../hooks/useDismissablePopover'
 
-const SEGMENT_BASE = 'flex-1 rounded-[8px] py-1 text-xs font-medium transition'
-const SEGMENT_ACTIVE = 'bg-white/20'
-const SEGMENT_INACTIVE = 'opacity-70 hover:opacity-100'
+const SEGMENT_BASE = 'flex-1 rounded-[var(--radius-control)] py-1 text-xs font-medium transition'
+const SEGMENT_ACTIVE = 'bg-[var(--color-surface-3)] text-[var(--color-ink)]'
+const SEGMENT_INACTIVE = 'text-[var(--color-ink-subtle)] hover:text-[var(--color-ink)]'
 
 // Control Center dropdown: appearance, brightness, language (section 7.5).
 export function ControlCenter() {
@@ -114,7 +114,8 @@ export function ControlCenter() {
           // as "inside" the popover.
           <div
             ref={panelRef}
-            className="glass-panel fixed inset-x-3 bottom-4 z-50 rounded-[var(--radius-window)] p-4 text-sm"
+            className="glass-panel fixed inset-x-3 bottom-4 z-50 overscroll-contain rounded-[var(--radius-window)] p-4 text-sm"
+            style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
           >
             <ControlCenterFields
               theme={theme}
@@ -180,8 +181,8 @@ function ControlCenterFields({ theme, setTheme, brightness, setBrightness, lang,
   return (
     <>
       <fieldset>
-        <legend className="mb-1.5 text-xs font-medium opacity-70">{t(uiStrings.appearance)}</legend>
-        <div className="flex w-full rounded-[var(--radius-control)] bg-black/10 p-0.5">
+        <legend className="mb-1.5 text-xs font-medium text-[var(--color-ink-subtle)]">{t(uiStrings.appearance)}</legend>
+        <div className="flex w-full rounded-[var(--radius-control)] bg-[var(--color-surface-2)] p-0.5">
           <button
             type="button"
             aria-pressed={theme === 'dark'}
@@ -202,7 +203,7 @@ function ControlCenterFields({ theme, setTheme, brightness, setBrightness, lang,
       </fieldset>
 
       <div className="mt-4">
-        <label htmlFor="brightness-slider" className="mb-1.5 block text-xs font-medium opacity-70">
+        <label htmlFor="brightness-slider" className="mb-1.5 block text-xs font-medium text-[var(--color-ink-subtle)]">
           {t(uiStrings.brightness)}
         </label>
         <input
@@ -217,8 +218,8 @@ function ControlCenterFields({ theme, setTheme, brightness, setBrightness, lang,
       </div>
 
       <fieldset className="mt-4">
-        <legend className="mb-1.5 text-xs font-medium opacity-70">{t(uiStrings.language)}</legend>
-        <div className="flex w-full rounded-[var(--radius-control)] bg-black/10 p-0.5">
+        <legend className="mb-1.5 text-xs font-medium text-[var(--color-ink-subtle)]">{t(uiStrings.language)}</legend>
+        <div className="flex w-full rounded-[var(--radius-control)] bg-[var(--color-surface-2)] p-0.5">
           <button
             type="button"
             aria-pressed={lang === 'en'}

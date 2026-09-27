@@ -34,8 +34,8 @@ export function ContactApp() {
         aria-label={t(uiStrings.contactChannelsNavLabel)}
         className={
           isMobile
-            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--glass-border)] p-2'
-            : 'w-40 shrink-0 overflow-y-auto border-r border-[var(--glass-border)] p-2'
+            ? 'flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
+            : 'w-40 shrink-0 overflow-y-auto border-r border-[var(--color-hairline)] bg-[var(--color-surface-2)] p-2'
         }
       >
         <ul className={isMobile ? 'flex gap-1' : 'flex flex-col gap-1'}>
@@ -45,7 +45,7 @@ export function ContactApp() {
                 href={CHANNEL_HREF[channel.id]}
                 target={channel.id === 'email' ? undefined : '_blank'}
                 rel={channel.id === 'email' ? undefined : 'noreferrer'}
-                className="flex items-center gap-2 rounded-[8px] px-2 py-1.5 whitespace-nowrap transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]"
+                className="flex items-center gap-2 rounded-[var(--radius-control)] px-2 py-1.5 whitespace-nowrap text-[var(--color-ink-muted)] transition hover:bg-[var(--color-surface-3)] hover:text-[var(--color-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]"
               >
                 <FontAwesomeIcon icon={CHANNEL_ICON[channel.id]} className="w-4" />
                 {t(channel.label)}
@@ -55,8 +55,8 @@ export function ContactApp() {
         </ul>
       </nav>
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="glass-panel rounded-[10px] p-4">
-          <p className="leading-relaxed opacity-90">{t(contactMessage)}</p>
+        <div className="rounded-[var(--radius-card)] bg-[var(--color-surface-2)] p-4">
+          <p className="leading-relaxed text-[var(--color-ink-muted)]">{t(contactMessage)}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <a
               href={CHANNEL_HREF.email}
@@ -69,7 +69,7 @@ export function ContactApp() {
               href={CHANNEL_HREF.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium ring-1 ring-white/20 transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+              className="rounded-full bg-[var(--color-surface-3)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink)] ring-1 ring-[var(--color-hairline-strong)] transition hover:bg-[var(--color-surface-2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
             >
               <FontAwesomeIcon icon={faLinkedin} className="mr-1.5" />
               {t(CHANNEL_LABEL.linkedin)}
@@ -78,7 +78,7 @@ export function ContactApp() {
               href={CHANNEL_HREF.github}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium ring-1 ring-white/20 transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+              className="rounded-full bg-[var(--color-surface-3)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink)] ring-1 ring-[var(--color-hairline-strong)] transition hover:bg-[var(--color-surface-2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
             >
               <FontAwesomeIcon icon={faGithub} className="mr-1.5" />
               {t(CHANNEL_LABEL.github)}

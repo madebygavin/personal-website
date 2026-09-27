@@ -51,17 +51,18 @@ export function AppSheet({ appId, onClose }: AppSheetProps) {
       animate={{ y: 0 }}
       exit={{ y: reducedMotion ? 0 : '100%' }}
       transition={{ duration: reducedMotion ? 0.15 : 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="glass-panel fixed inset-0 z-40 flex flex-col overflow-hidden outline-none"
+      className="glass-panel fixed inset-0 z-40 flex flex-col overflow-hidden overscroll-contain outline-none"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="relative flex h-12 shrink-0 items-center justify-center border-b border-[var(--glass-border)] px-3">
-        <span id={titleId} className="text-sm font-semibold">
+      <div className="relative flex h-12 shrink-0 items-center justify-center border-b border-[var(--color-hairline)] px-3">
+        <h2 id={titleId} className="m-0 text-[17px] leading-tight font-semibold tracking-[-0.1px]">
           {t(appNames[appId])}
-        </span>
+        </h2>
         <button
           type="button"
           aria-label={t(uiStrings.close)}
           onClick={onClose}
-          className="absolute right-2 flex h-9 w-9 items-center justify-center rounded-full text-base transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+          className="absolute right-2 flex h-9 w-9 items-center justify-center rounded-full text-base transition hover:bg-[var(--color-surface-3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
         >
           <FontAwesomeIcon icon={faXmark} />
         </button>

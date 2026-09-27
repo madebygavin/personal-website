@@ -21,7 +21,9 @@ function Slot() {
   )
 }
 
-// Diagonal accent blocks: original geometry, tinted with the site's accent.
+// Diagonal accent blocks: original geometry, tinted with the site's accent
+// and surface tokens (DESIGN.md) rather than a one-off hardcoded pair, so the
+// card reads as part of the same system instead of its own gradient.
 function Accents({ variant }: { variant: 'front' | 'back' }) {
   const [light, dark] =
     variant === 'front'
@@ -33,8 +35,8 @@ function Accents({ variant }: { variant: 'front' | 'back' }) {
       viewBox="0 0 232 340"
       className="pointer-events-none absolute inset-0 h-full w-full"
     >
-      <polygon points={light} fill="#5b9dff" opacity="0.9" />
-      <polygon points={dark} fill="#0b0c10" opacity="0.55" />
+      <polygon points={light} fill="var(--color-accent)" opacity="0.5" />
+      <polygon points={dark} fill="var(--color-canvas)" opacity="0.55" />
     </svg>
   )
 }
@@ -50,11 +52,11 @@ export function CardFront() {
       <Slot />
       <div className="absolute inset-x-0 top-10 flex justify-center">
         <div className="h-[132px] w-[132px] overflow-hidden rounded-full border-2 border-white/25 shadow-lg">
-          <img src={avatarUrl} alt="" draggable={false} className="h-full w-full object-cover" />
+          <img src={avatarUrl} alt="" draggable={false} width={132} height={132} className="h-full w-full object-cover" />
         </div>
       </div>
       <div className="absolute inset-x-0 top-[186px] px-5 text-center">
-        <p className="text-[26px] leading-tight font-semibold tracking-tight">{profile.name}</p>
+        <p className="text-[40px] leading-tight font-semibold tracking-[-0.5px]">{profile.name}</p>
         <p className="mt-1 text-[13px] font-medium text-white/80">{t(profile.title)}</p>
       </div>
       <BrandMark size={28} className="absolute bottom-4 left-4" />
@@ -100,7 +102,7 @@ export function CardBack() {
               className="flex items-center gap-2 rounded-lg bg-white/8 px-2.5 py-1.5 transition hover:bg-white/16 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--color-accent)]"
             >
               <FontAwesomeIcon icon={CHANNEL_ICONS[channel.id]} className="w-4 shrink-0" />
-              <span className="truncate">{channelText(channel.id)}</span>
+              <span className="min-w-0 truncate">{channelText(channel.id)}</span>
             </a>
           </li>
         ))}

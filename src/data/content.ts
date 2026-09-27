@@ -26,7 +26,7 @@ export const uiStrings = {
   login: { en: 'Login', vi: 'Đăng nhập' },
   logout: { en: 'Log Out', vi: 'Đăng xuất' },
   restart: { en: 'Restart', vi: 'Khởi động lại' },
-  loading: { en: 'Loading', vi: 'Đang tải' },
+  loading: { en: 'Loading…', vi: 'Đang tải…' },
   desktopLabel: { en: 'Desktop', vi: 'Màn hình nền' },
   aboutThisSite: { en: 'About This Site', vi: 'Giới thiệu trang web' },
   close: { en: 'Close', vi: 'Đóng' },

@@ -78,6 +78,12 @@ function DockIcon({
     if (!bounds) return Infinity
     return value - (bounds.left + bounds.width / 2)
   })
+  // Animates width/height (not just transform) on purpose: this is what
+  // actually reflows the flex row so neighboring icons make room for the
+  // magnified one, matching real dock behavior. A transform: scale version
+  // was tried (compositor-only) but the layout box stayed fixed size, so
+  // magnified icons visually overlapped their neighbors instead of the row
+  // spreading apart.
   const targetSize = useTransform(distance, [-140, 0, 140], [44, 68, 44])
   const size = useSpring(targetSize, { mass: 0.15, stiffness: 260, damping: 18 })
 
@@ -102,13 +108,15 @@ function DockIcon({
           if (!isActive) onOpen()
         }}
         style={{ width: size, height: size, backgroundImage: app.gradient }}
-        className="flex items-center justify-center rounded-[var(--radius-dock-icon)] text-white shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+        className="flex items-center justify-center rounded-[var(--radius-card)] text-white shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
       >
         <FontAwesomeIcon icon={app.icon} className="text-lg" />
       </motion.button>
       <span
         aria-hidden="true"
-        className={`mt-1 h-1 w-1 rounded-full transition-opacity ${isActive ? 'bg-[var(--color-accent)] opacity-100' : 'opacity-0'}`}
+        className={`mt-1 h-1 w-1 rounded-full transition-[opacity,box-shadow] ${
+          isActive ? 'bg-[var(--color-accent)] opacity-100 shadow-[0_0_6px_2px_var(--color-accent-soft)]' : 'opacity-0'
+        }`}
       />
     </div>
   )

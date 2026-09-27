@@ -7,7 +7,7 @@ import { useDismissablePopover } from '../../hooks/useDismissablePopover'
 import { AboutDialog } from './AboutDialog'
 
 const MENU_ITEM_CLASS =
-  'block w-full rounded-[8px] px-3 py-1.5 text-left transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]'
+  'block w-full rounded-[var(--radius-control)] px-3 py-1.5 text-left transition hover:bg-[var(--color-surface-3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)]'
 
 // Logo menu: About this site, Restart, Log Out (section 7.5).
 export function LogoMenu() {
