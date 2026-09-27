@@ -55,7 +55,7 @@ export function Window({ title, constraintsRef, onClose, children }: WindowProps
       transition={{ duration: reducedMotion ? 0.15 : 0.2 }}
       onAnimationComplete={() => setEntered(true)}
       style={{ width: 'min(880px, 90vw)', height: 'min(600px, 100%)' }}
-      className="glass-panel relative flex flex-col overflow-hidden rounded-[var(--radius-window)] outline-none"
+      className="glass-panel pointer-events-auto relative flex flex-col overflow-hidden rounded-[var(--radius-window)] outline-none"
     >
       <div
         onPointerDown={(event) => dragControls.start(event)}

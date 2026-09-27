@@ -10,7 +10,8 @@ export const profile = {
     en: 'Software Developer',
     vi: 'Lập trình viên phần mềm',
   },
-} satisfies { name: string; title: Localized<string> }
+  location: 'Tampa',
+} satisfies { name: string; title: Localized<string>; location: string }
 
 // Dock tooltips + menu bar active-app label (PROJECT_BRIEF.md 7.5 gap #1, 7.6).
 export const appNames = {
@@ -300,3 +301,14 @@ export const contactMessage: Localized<string> = {
   en: "Feel free to reach out — whether it's a job opportunity, collaboration, or just a hello!",
   vi: 'Đừng ngại liên hệ với mình — dù là cơ hội việc làm, hợp tác, hay chỉ đơn giản là một lời chào!',
 }
+
+// ---- ID card (hanging lanyard badge on the desktop) ----
+export const idCardStrings = {
+  groupLabel: {
+    en: 'ID card. Drag it to swing it, or use the button to flip it.',
+    vi: 'Thẻ nhân viên. Kéo để đung đưa, hoặc dùng nút để lật thẻ.',
+  },
+  flipToBack: { en: 'Flip card to see contact details', vi: 'Lật thẻ để xem thông tin liên hệ' },
+  flipToFront: { en: 'Flip card to see profile', vi: 'Lật thẻ để xem hồ sơ' },
+  underConstruction: { en: 'Under construction', vi: 'Đang xây dựng' },
+} satisfies Record<string, Localized<string>>

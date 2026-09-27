@@ -1,6 +1,7 @@
 import { Suspense, useRef, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { usePreferences } from '../../state/preferences'
+import { useSession } from '../../state/session'
 import { useLang } from '../../hooks/useLang'
 import { useClock } from '../../hooks/useClock'
 import { appNames, uiStrings, type AppId } from '../../data/content'
@@ -10,6 +11,7 @@ import { DesktopClock } from './DesktopClock'
 import { MenuBar } from './MenuBar'
 import { Dock, type DockHandle } from './Dock'
 import { Window } from './Window'
+import { LanyardCard } from './LanyardCard'
 
 // Layer order (section 7.4): wallpaper, menu bar, window layer, dock,
 // brightness overlay. Menu bar and dock float above the window layer
@@ -19,6 +21,7 @@ import { Window } from './Window'
 // window layer (z-10) still covers it like a real desktop widget.
 export function Desktop() {
   const { brightness } = usePreferences()
+  const { phase } = useSession()
   const { t } = useLang()
   // One shared tick for both MenuBar and DesktopClock (see their own
   // comments) rather than each calling useClock() independently.
@@ -44,7 +47,7 @@ export function Desktop() {
 
       {/* Free area between the menu bar and dock — also the drag boundary
           for the open window (section 7.7). */}
-      <div ref={windowAreaRef} className="absolute inset-x-0 top-7 bottom-24 z-10 flex items-center justify-center">
+      <div ref={windowAreaRef} className="pointer-events-none absolute inset-x-0 top-7 bottom-24 z-10 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {activeApp && ActiveAppComponent && (
             <Window key={activeApp} title={t(appNames[activeApp])} constraintsRef={windowAreaRef} onClose={handleCloseWindow}>
@@ -57,6 +60,10 @@ export function Desktop() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Hanging ID card. Mounted only once the session is fully on the desktop,
+          since Desktop also renders (scaled) during the zoom transitions. */}
+      {phase === 'desktop' && <LanyardCard />}
 
       <Dock ref={dockRef} activeApp={activeApp} onOpenApp={setActiveApp} />
 

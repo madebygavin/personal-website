@@ -3,7 +3,6 @@ import avatarUrl from '../../assets/avatar.webp'
 import { useClock } from '../../hooks/useClock'
 import { useLang } from '../../hooks/useLang'
 import { formatClock, formatDate } from '../../utils/format'
-import { getVisitorCity } from '../../utils/timezone'
 import { profile, uiStrings } from '../../data/content'
 
 interface LoginScreenProps {
@@ -13,7 +12,6 @@ interface LoginScreenProps {
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const now = useClock()
   const { lang, t } = useLang()
-  const city = getVisitorCity()
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -40,7 +38,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       <div className="mt-3 text-3xl font-light tabular-nums">{formatClock(now, lang)}</div>
       <div className="text-sm opacity-70">
         {formatDate(now, lang)}
-        {city ? ` · ${city}` : ''}
+        {` · ${profile.location}`}
       </div>
 
       <button
